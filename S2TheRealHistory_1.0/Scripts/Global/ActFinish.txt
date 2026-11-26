@@ -1,0 +1,873 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: Act Finish Object
+// Script Author: Christan Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+//-------Aliases-------//
+private alias 8 : TYPE_ACTFINISH
+
+
+// Static Values
+
+// TRH VIDEO WARP POINT (GIF + OGG sincronizado)
+//   object.state = 20 reproduce el video antes de cargar TRH_vidTarget.
+//   6 ticks por frame = 10 fps exactos. El audio arranca con el frame 0.
+private value TRH_vidVideo = 0;
+private value TRH_vidTarget = 0;
+private value TRH_vidTotal = 0;
+private value TRH_vidSheets = 0;
+private value TRH_vidSheet = 0;
+private value TRH_vidFrame = 0;
+private value TRH_vidTimer = 0;
+private value TRH_vidBase = 0;
+
+// Tables
+
+event ObjectMain
+	switch object.state
+	case 0
+		stage.pauseEnabled = 0
+		object.drawOrder = 6
+		if object.priority != PRIORITY_ACTIVE_PAUSED
+			object.priority = PRIORITY_ACTIVE
+		end if
+		object.value1 = -384
+		object.value2 = 384
+		object.value3 = 640
+		object.value4 = 656
+		object.value5 = 672
+		object.value6 = 688
+		switch stage.minutes
+		case 0
+			if stage.seconds < 30
+				object.value7 = 0xC350
+			else
+				if stage.seconds < 45
+					object.value7 = 0x2710
+				else
+					object.value7 = 0x1388
+				end if
+			end if
+			break
+		case 1
+			if stage.seconds < 30
+				object.value7 = 0xFA0
+			else
+				object.value7 = 0xBB8
+			end if
+			break
+		case 2
+			object.value7 = 0x7D0
+			break
+		case 3
+			object.value7 = 1000
+			break
+		case 4
+			object.value7 = 500
+			break
+		case 5
+			object.value7 = 100
+			break
+		case 9
+			if stage.debugMode == 0
+				if options.gameMode < 2
+					if stage.seconds == 59
+						object.value7 = 0x186A0
+					end if
+				end if
+			end if
+			break
+		end switch
+		object.value8 = object[0].value0
+		object.value8 *= 100
+		switch stage.playerListPos
+		case 0
+		case 3
+			temp0 = 0
+			foreach (TypeName[Ring], arrayPos0, ALL_ENTITIES)
+				if object[arrayPos0].propertyValue <= 1
+					temp0++
+				end if
+			next
+			break
+		case 1
+		case 2
+			temp0 = 0
+			foreach (TypeName[Ring], arrayPos0, ALL_ENTITIES)
+				if object[arrayPos0].propertyValue != 2
+					temp0++
+				end if
+			next
+			break
+		end switch
+		if temp0 == 0
+			object.value10 = 1
+			object.value9 = 0xC350
+		end if
+		if stage.activeList == REGULAR_STAGE
+			if stage.listPos == 32
+				object.value10 = 0
+				object.value9 = 0
+			end if
+		end if
+		if object.value10 == 1
+			if stage.debugMode == 0
+				if options.gameMode != 5
+					//CallNativeFunction2(SetAchievement, 6, 100)
+					achievement.trigger = 7 // Perfectionist
+				end if
+			end if
+		end if
+		object.state++
+		break
+	case 1
+		if object.value1 < 0
+			object.value1 += 16
+		end if
+		if object.value2 > 0
+			object.value2 -= 16
+		end if
+		if object.value3 > 0
+			object.value3 -= 16
+		end if
+		if object.value4 > 0
+			object.value4 -= 16
+		end if
+		if object.value5 > 0
+			object.value5 -= 16
+		end if
+		if object.value6 > 0
+			object.value6 -= 16
+		else
+			object.state++
+		end if
+		break
+	case 2
+		object.value0++
+		switch options.gameMode
+			case 2
+				if object.value0 > 400
+					object.value0 = 0
+					object.state = 5
+				end if
+				break
+			case 5
+				break
+			default
+				if object.value0 > 299
+					object.value0 = 0
+					object.state++
+				end if
+				break
+		end switch
+		break
+	case 3
+		temp2 = inputDown.buttonA
+		temp2 |= inputDown.buttonB
+		temp2 |= inputDown.buttonC
+		if temp2 == 1
+			temp3 = 2000
+			if temp3 > object.value7
+				temp3 = object.value7
+			end if
+			temp4 = 2000
+			if temp4 > object.value8
+				temp4 = object.value8
+			end if
+			temp5 = 2000
+			if temp5 > object.value9
+				temp5 = object.value9
+			end if
+		else
+			temp3 = 100
+			temp4 = 100
+			temp5 = 100
+		end if
+		if object.value7 > 0
+			object.value7 -= temp3			
+			object.value11 += temp3
+			player.score += temp3
+		end if
+		if object.value8 > 0
+			object.value8 -= temp4
+			object.value11 += temp4
+			player.score += temp4
+		end if
+		if object.value9 > 0
+			object.value9 -= temp5
+			object.value11 += temp5
+			player.score += temp5
+		end if
+		
+		//if object.value7 > 0
+		//	object.value7 -= 100
+		//	object.value11 += 100
+		//	player.score += 100
+		//end if
+		//if object.value8 > 0
+		//	object.value8 -= 100
+		//	object.value11 += 100
+		//	player.score += 100
+		//end if
+		//if object.value9 > 0
+		//	object.value9 -= 100
+		//	object.value11 += 100
+		//	player.score += 100
+		//end if
+		
+		CheckGreater(object.value7, 0)
+		temp0 = checkResult
+		CheckGreater(object.value8, 0)
+		temp0 |= checkResult
+		CheckGreater(object.value9, 0)
+		temp0 |= checkResult
+		if temp0 == 1
+			object.value0++
+			if object.value0 == 2
+				PlaySfx(SfxName[Score Add], 0)
+				object.value0 = 0
+			end if
+		else
+			if options.vsMode == 0
+				if options.gameMode < 2
+					if object.value11 >= 0x2710
+						if temp2 == 1
+							object.value0 = 0
+							object.value12 = 1
+							player.continues++
+							PlaySfx(SfxName[Continue], 0)
+							object.state = 4	
+						else
+							object.state = 6
+						end if
+					else
+						object.state++
+					end if
+				else
+					object.state++
+				end if
+			else
+				object.state++
+			end if
+			object.value0 = 0
+			PlaySfx(SfxName[Score Total], 0)
+		end if
+		break
+	case 6
+		object.value0++
+		if object.value0 == 60
+			object.value0 = 0
+			object.value12 = 1
+			player.continues++
+			PlaySfx(SfxName[Continue], 0)
+			object.state = 4
+		end if
+		break
+	case 4
+		object.value0++
+		if object.value0 == 160
+			object.value0 = 0
+			object.state++
+			if stage.activeList == REGULAR_STAGE
+				if stage.listPos == 31
+					if options.gameMode != 2
+						object.state = 10
+						object.value12 = 0
+					end if
+				end if
+			end if
+		end if
+		break
+	case 5
+		object.value0 += 8
+		SetScreenFade(0, 0, 0, object.value0)
+		if object.value0 >= 384
+			fadeColor = 0
+			object.value0 = 0
+			starPostID = 0
+			object.direction = FLIP_NONE
+			// ============================================================
+			// TRH: PROGRESION POR ERAS (reemplaza stage.listPos++)
+			//   Orden pedido por el diseno:
+			//   PRESENT:  Emerald Hill -> Ocean Wind -> Jungle Woods ->
+			//             Sand Shower -> Metropolis -> WARP POINT 1 -> PAST
+			//   PAST:     Tropical Sun -> Aquatic Ruin -> Blue Lake ->
+			//             Hill Top -> Rock World -> WARP POINT 2 -> RUINED
+			//   RUINED:   Dust Hill -> Oil Ocean -> Rocky Winter ->
+			//             Hidden Place -> (Olympus) -> FUTURE
+			//   FUTURE:   Casino Night -> Chemical Plant -> Genocide/Cyber
+			//             -> LAST BATTLE
+			//   LAST:     Sky Fortress -> Death Egg -> Main Menu
+			//   Dust Hill y Oil Ocean comparten listPos 12/13 (Dust Hill es
+			//   placeholder). saveRAM[2009] lleva la sub-secuencia:
+			//   0=inicio 1=DustHill a1 2=DustHill a2 3=OilOcean a1 4=OilOcean a2
+			// ============================================================
+			temp0 = stage.listPos
+			// TRH: Dust Hill / Mystic Cave Act2 (Zone06) siempre -> Oil Ocean Act1 (22)
+			// Evita que el default mande al Stage Select
+			CheckCurrentStageFolder("Zone06")
+			if checkResult == 1
+				if stage.actNum == 2
+					temp0 = 21
+				end if
+			end if
+			switch temp0
+				case 0
+					stage.listPos = 1
+					break
+				case 1
+					stage.listPos = 2
+					break
+				case 2
+					stage.listPos = 3
+					break
+				case 3
+					stage.listPos = 4
+					break
+				case 4
+					stage.listPos = 5
+					break
+				case 5
+					stage.listPos = 6
+					break
+				case 6
+					stage.listPos = 7
+					break
+				case 7
+					stage.listPos = 8
+					break
+				case 8
+					stage.listPos = 9
+					break
+				case 10
+					stage.listPos = 11
+					break
+				case 11
+					stage.listPos = 12
+					break
+				case 12
+					stage.listPos = 13
+					break
+				case 13
+					stage.listPos = 14
+					break
+				case 14
+					stage.listPos = 15
+					break
+				case 15
+					stage.listPos = 16
+					break
+				case 16
+					stage.listPos = 17
+					break
+				case 17
+					// Hill Top Act2 (ultimo de PAST) -> HIDDEN PALACE -> RUINED (Rock World)
+					saveRAM[2009] = 0
+					stage.activeList = REGULAR_STAGE
+					stage.listPos = 35
+					break
+				case 20
+					stage.listPos = 21
+					break
+				case 21
+					// Mystic Cave Act2 (ultimo de RUINED) -> FUTURE
+					stage.listPos = 26
+					break
+				case 22
+					stage.listPos = 23
+					break
+				case 23
+					// Oil Ocean Act2 -> Mystic Cave Act1
+					stage.listPos = 20
+					break
+				case 24
+					stage.listPos = 25
+					break
+				case 26
+					stage.listPos = 27
+					break
+				case 27
+					stage.listPos = 28
+					break
+				case 28
+					stage.listPos = 29
+					break
+				case 29
+					stage.listPos = 30
+					break
+				case 9
+					// Metropolis Act2 -> WARP POINT 1 -> PAST (Tropical Sun)
+					TRH_vidVideo = 1
+					TRH_vidTarget = 10
+					TRH_vidTotal = 60
+					TRH_vidFrame = 0
+					TRH_vidTimer = 0
+					TRH_vidSheet = 0
+					object.state = 20
+					break
+				case 25
+					// Rock World Act2 (primero de RUINED) -> Oil Ocean Act1
+					saveRAM[2009] = 0
+					stage.activeList = REGULAR_STAGE
+					stage.listPos = 22
+					break
+				case 30
+					stage.listPos = 46
+					break
+				case 46
+					stage.listPos = 34
+					break
+				case 34
+					stage.listPos = 31
+					break
+				case 31
+					stage.listPos = 32
+					break
+				case 32
+					stage.activeList = PRESENTATION_STAGE
+					stage.listPos = 1
+					break
+				case 35
+					if saveRAM[2022] == 1
+						stage.listPos = saveRAM[2020]
+						starPostID = saveRAM[2021]
+						saveRAM[2022] = 0
+					else
+						stage.listPos = 24
+					end if
+					break
+				default
+					stage.activeList = PRESENTATION_STAGE
+					stage.listPos = 1
+					break
+			end switch
+			if object.state != 20
+			switch options.gameMode
+				case 1
+					arrayPos1 = options.saveSlot
+					arrayPos1 <<= 3
+					arrayPos1 += 1000
+					if stage.player2Enabled == 1
+						switch stage.playerListPos
+							case 0
+								saveRAM[arrayPos1] = 3
+								break
+							case 2
+								saveRAM[arrayPos1] = 4
+								break
+						end switch
+					else
+						saveRAM[arrayPos1] = stage.playerListPos
+					end if
+					arrayPos1++
+					saveRAM[arrayPos1] = player.lives
+					arrayPos1++
+					saveRAM[arrayPos1] = player.score
+					arrayPos1++
+					saveRAM[arrayPos1] = player.scoreBonus
+					arrayPos1++
+					temp0 = stage.listPos
+					temp0++
+					if saveRAM[arrayPos1] != 100
+						saveRAM[arrayPos1] = temp0
+					end if
+					arrayPos1++
+					saveRAM[arrayPos1] = specialStage.emeralds
+					arrayPos1++
+					saveRAM[arrayPos1] = specialStage.listPos
+					arrayPos1++
+					saveRAM[arrayPos1] = player.continues
+					WriteSaveRAM()					
+					LoadStage()
+					break
+				case 2
+					options.attractMode = 0
+					player.lives = 3
+					player.continues = 0
+					player.score = 0
+					player.scoreBonus = 0xC350
+					starPostID = 0
+					specialStage.listPos = 0
+					specialStage.emeralds = 0
+					specialStage.nextZone = 0
+					stage.activeList = PRESENTATION_STAGE
+					stage.listPos = 7
+					LoadStage()
+					break
+				case 5
+					options.attractMode = 0
+					player.lives = 3
+					player.continues = 0
+					player.score = 0
+					player.scoreBonus = 0xC350
+					starPostID = 0
+					specialStage.listPos = 0
+					specialStage.emeralds = 0
+					specialStage.nextZone = 0
+					stage.activeList = PRESENTATION_STAGE
+					stage.listPos = 6
+					LoadStage()
+					break
+					
+				default			
+					temp0 = engine.trialMode
+					if stage.listPos >= stage.listSize
+						temp0 = 1
+					end if
+					if temp0 == 0
+						LoadStage()
+					else
+						stage.activeList = PRESENTATION_STAGE
+						stage.listPos = 0
+						LoadStage()
+					end if
+					break
+			end switch
+			end if
+		end if
+		break
+	case 10
+		if object.value1 > -384
+			object.value1 -= 16
+		end if
+		if object.value2 < 384
+			object.value2 += 16
+		end if
+		if object.value3 < 640
+			object.value3 += 16
+		end if
+		if object.value4 < 656
+			object.value4 += 16
+		end if
+		if object.value5 < 672
+			object.value5 += 16
+		end if
+		if object.value6 < 688
+			object.value6 += 16
+		else
+			object.type = TypeName[Blank Object]
+			PlayMusic(0)
+		end if
+		break
+	case 20
+		// ============================================================
+		// TRH VIDEO WARP POINT (GIF + OGG sincronizado)
+		//   6 ticks por frame = 10 fps exactos. El audio arranca con
+		//   el frame 0 y dura lo mismo que el video.
+		// ============================================================
+		if TRH_vidFrame == 0
+			if TRH_vidTimer == 0
+				// --- Primer frame: paleta + hoja 1 + audio ---
+				RemoveSpriteSheet("Global/Display.gif")
+				if TRH_vidVideo == 1
+					LoadPalette("TRH_WarpP1Pal.act", 7, 0, 0, 256)
+					LoadSpriteSheet("TRH/WarpP1_1.gif")
+					SetMusicTrack("TRH_WarpPoint1.ogg", 0, 0)
+				else
+					LoadPalette("TRH_WarpP2Pal.act", 7, 0, 0, 256)
+					LoadSpriteSheet("TRH/WarpP2_1.gif")
+					SetMusicTrack("TRH_WarpPoint2.ogg", 0, 0)
+				end if
+				PlayMusic(0)
+			end if
+		end if
+		// --- Avance de frames ---
+		TRH_vidTimer++
+		if TRH_vidTimer >= 6
+			TRH_vidTimer = 0
+			TRH_vidFrame++
+			// --- Cambio de hoja ---
+			temp0 = TRH_vidFrame
+			temp0 /= 24
+			if temp0 != TRH_vidSheet
+				TRH_vidSheet = temp0
+				if TRH_vidVideo == 1
+					if TRH_vidSheet == 1
+						RemoveSpriteSheet("TRH/WarpP1_1.gif")
+						LoadSpriteSheet("TRH/WarpP1_2.gif")
+					else
+						RemoveSpriteSheet("TRH/WarpP1_2.gif")
+						LoadSpriteSheet("TRH/WarpP1_3.gif")
+					end if
+				else
+					if TRH_vidSheet == 1
+						RemoveSpriteSheet("TRH/WarpP2_1.gif")
+						LoadSpriteSheet("TRH/WarpP2_2.gif")
+					else
+						if TRH_vidSheet == 2
+							RemoveSpriteSheet("TRH/WarpP2_2.gif")
+							LoadSpriteSheet("TRH/WarpP2_3.gif")
+						else
+							if TRH_vidSheet == 3
+								RemoveSpriteSheet("TRH/WarpP2_3.gif")
+								LoadSpriteSheet("TRH/WarpP2_4.gif")
+							else
+								if TRH_vidSheet == 4
+									RemoveSpriteSheet("TRH/WarpP2_4.gif")
+									LoadSpriteSheet("TRH/WarpP2_5.gif")
+								else
+									if TRH_vidSheet == 5
+										RemoveSpriteSheet("TRH/WarpP2_5.gif")
+										LoadSpriteSheet("TRH/WarpP2_6.gif")
+									else
+										RemoveSpriteSheet("TRH/WarpP2_6.gif")
+										LoadSpriteSheet("TRH/WarpP2_7.gif")
+									end if
+								end if
+							end if
+						end if
+					end if
+				end if
+			end if
+		end if
+		// --- Fin del video ---
+		if TRH_vidFrame >= TRH_vidTotal
+			if TRH_vidVideo == 1
+				RemoveSpriteSheet("TRH/WarpP1_3.gif")
+			else
+				RemoveSpriteSheet("TRH/WarpP2_7.gif")
+			end if
+			StopMusic()
+			// Guardar estado (mismo formato que el case 1 normal)
+			arrayPos1 = options.saveSlot
+			arrayPos1 <<= 3
+			arrayPos1 += 1000
+			saveRAM[arrayPos1] = stage.playerListPos
+			arrayPos1++
+			saveRAM[arrayPos1] = player.lives
+			arrayPos1++
+			saveRAM[arrayPos1] = player.score
+			arrayPos1++
+			saveRAM[arrayPos1] = player.scoreBonus
+			arrayPos1++
+			temp0 = TRH_vidTarget
+			temp0++
+			if saveRAM[arrayPos1] != 22
+				saveRAM[arrayPos1] = temp0
+			end if
+			arrayPos1++
+			saveRAM[arrayPos1] = specialStage.emeralds
+			arrayPos1++
+			saveRAM[arrayPos1] = specialStage.listPos
+			arrayPos1++
+			saveRAM[arrayPos1] = player.continues
+			WriteSaveRAM()
+			stage.activeList = 1
+			stage.listPos = TRH_vidTarget
+			LoadStage()
+		end if
+		break
+	end switch
+end event
+
+
+event ObjectDraw
+	if object.state == 20
+		// VIDEO WARP POINT: negro + frame con la paleta del video
+		SetActivePalette(7, 0, screen.ysize)
+		DrawRect(0, 0, screen.xsize, screen.ysize, 0, 0, 0, 255)
+		temp1 = TRH_vidFrame
+		temp0 = TRH_vidSheet
+		temp0 *= 24
+		temp1 -= temp0
+		temp2 = temp1
+		temp2 %= 4
+		temp2 *= 256
+		temp3 = temp1
+		temp3 /= 4
+		temp3 *= 144
+		EditFrame(0, 0, 0, 256, 144, temp2, temp3)
+		temp2 = screen.xcenter
+		temp2 -= 128
+		temp3 = screen.ycenter
+		temp3 -= 72
+		DrawSpriteScreenXY(0, temp2, temp3)
+		SetActivePalette(0, 0, screen.ysize)
+	else
+		SetActivePalette(0, 0, screen.ysize)
+		temp7 = object.value1
+	temp7 += screen.xcenter
+	DrawSpriteScreenXY(0, temp7, 64)
+	DrawSpriteScreenXY(1, temp7, 64)
+	temp7 = object.value2
+	temp7 += screen.xcenter
+	DrawSpriteScreenXY(2, temp7, 82)
+	if TitleCard_value23 == 0
+		DrawSpriteScreenXY(3, temp7, 82)
+		temp1 = stage.actNum
+		temp1 += 4
+		DrawSpriteScreenXY(temp1, temp7, 70)
+	else
+		DrawSpriteScreenXY(4, temp7, 82)
+	end if
+	temp7 = object.value3
+	temp7 += screen.xcenter
+	
+	switch options.gameMode
+		case 2
+		case 5
+			temp7 -= 44
+			temp1 = temp7
+			temp1 += 24
+			DrawSpriteScreenXY(29, temp1, 121)
+			DrawSpriteScreenXY(30, temp7, 121)
+			temp7 += 96
+			
+			DrawSpriteScreenXY(28, temp7, 121)
+				temp7 += 37
+			DrawNumbers(14, temp7, 121, stage.milliSeconds, 2, 8, 1)
+			temp7 -= 24
+			DrawNumbers(14, temp7, 121, stage.seconds, 2, 8, 1)
+			temp7 -= 24
+			DrawNumbers(14, temp7, 121, stage.minutes, 10, 8, 0)
+			temp7 = object.value4
+			temp7 += screen.xcenter
+		
+			temp7 -= 84
+			temp1 = temp7
+			temp1 += 64
+			DrawSpriteScreenXY(29, temp1, 137)
+			DrawSpriteScreenXY(26, temp7, 137)
+			temp7 += 135
+			
+			DrawSpriteScreenXY(28, temp7, 137)
+				temp7 += 37
+			DrawNumbers(14, temp7, 137, object[9].value3, 2, 8, 1)
+			temp7 -= 24
+			DrawNumbers(14, temp7, 137, object[9].value4, 2, 8, 1)
+			temp7 -= 24
+			DrawNumbers(14, temp7, 137, object[9].value5, 2, 8, 0)
+
+			temp7 = object.value6
+			temp7 += screen.xcenter
+			if object[9].value2 > timeAttack.result
+				temp7 -= 33
+				temp1 = temp7
+				temp1 += 77
+				DrawSpriteScreenXY(29, temp1, 169)
+				DrawSpriteScreenXY(27, temp7, 169)
+			end if
+			break
+		default
+			DrawSpriteScreenXY(8, temp7, 120)
+			DrawSpriteScreenXY(13, temp7, 120)
+			temp7 += 88
+			DrawNumbers(14, temp7, 121, object.value7, 6, 8, 0)
+			temp7 = object.value4
+			temp7 += screen.xcenter
+		
+			DrawSpriteScreenXY(9, temp7, 136)
+			DrawSpriteScreenXY(13, temp7, 136)
+			temp7 += 88
+			DrawNumbers(14, temp7, 137, object.value8, 5, 8, 0)
+			if object.value10 == 1
+				temp7 = object.value5
+				temp7 += screen.xcenter
+				DrawSpriteScreenXY(10, temp7, 152)
+				DrawSpriteScreenXY(11, temp7, 152)
+				temp7 += 88
+				DrawNumbers(14, temp7, 153, object.value9, 5, 8, 0)
+			end if
+			temp7 = object.value6
+			temp7 += screen.xcenter
+			DrawSpriteScreenXY(12, temp7, 168)
+			temp7 += 88
+			DrawNumbers(14, temp7, 169, object.value11, 6, 8, 0)
+			if object.value12 == 1
+				GetBit(temp0, oscillation, 4)
+				if temp0 == 1
+					GetBit(temp0, oscillation, 5)
+					temp0 += 24
+					temp1 = screen.xcenter
+					temp1 += 112
+					temp2 = screen.ycenter
+					temp2 += 52
+					DrawSpriteScreenXY(temp0, temp1, temp2)
+				end if
+			end if
+			break
+	end switch
+	end if
+end event
+
+
+event ObjectStartup
+	LoadSpriteSheet("Global/Display.gif")
+	switch stage.playerListPos
+	case 0
+	case 3
+		SpriteFrame(-64, 0, 72, 16, 1, 222) //0 Sonic
+		SpriteFrame(16, 0, 48, 16, 1, 205) //1 Got
+		break
+	case 1
+		if saved.region == 0
+			SpriteFrame(-61, 0, 69, 16, 74, 222) //0 Tails
+		else
+			SpriteFrame(-71, 0, 79, 16, 144, 222) //0 Miles
+		end if
+		SpriteFrame(16, 0, 48, 16, 1, 205) //1 Got
+		break
+	case 2
+		SpriteFrame(-94, 0, 128, 16, 34, 188) //0 Knuckles
+		SpriteFrame(40, 0, 48, 16, 1, 205) //1 Got
+		break
+	end switch
+	SpriteFrame(-88, 0, 112, 16, 50, 205) //2 Through
+	SpriteFrame(33, 0, 46, 16, 163, 205) //3 Act
+	SpriteFrame(33, 0, 62, 16, 83, 1) //4 Zone
+	SpriteFrame(88, 0, 16, 29, 42, 1) //5 Act 1
+	SpriteFrame(88, 0, 23, 29, 59, 1) //6 Act 2
+	SpriteFrame(88, 0, 23, 32, 42, 31) //7 Act 3
+	SpriteFrame(-91, 1, 31, 11, 2, 17) // 8 Time
+	SpriteFrame(-92, 1, 32, 11, 1, 33) //9 Ring
+	SpriteFrame(-104, 1, 56, 11, 66, 35) //10 Perfect
+	SpriteFrame(-40, 0, 46, 16, 190, 1) //11 Bonus
+	SpriteFrame(-71, 0, 45, 16, 145, 1) //12 Total
+	SpriteFrame(-52, 0, 46, 16, 190, 1) //13 Bonus
+	
+	//Numbers
+	SpriteFrame(0, 0, 8, 11, 1, 50) 
+	SpriteFrame(0, 0, 8, 11, 10, 50)
+	SpriteFrame(0, 0, 8, 11, 19, 50)
+	SpriteFrame(0, 0, 8, 11, 28, 50)
+	SpriteFrame(0, 0, 8, 11, 1, 62)
+	SpriteFrame(0, 0, 8, 11, 10, 62)
+	SpriteFrame(0, 0, 8, 11, 19, 62)
+	SpriteFrame(0, 0, 8, 11, 28, 62)
+	SpriteFrame(0, 0, 8, 11, 1, 74)
+	SpriteFrame(0, 0, 8, 11, 10, 74)
+	
+	//Continue Sprites
+	switch stage.playerListPos
+	case 0
+	case 3
+		SpriteFrame(-8, -11, 16, 23, 178, 113) //24
+		SpriteFrame(-8, -11, 16, 23, 195, 113) //25
+		break
+	case 1
+		SpriteFrame(-8, -11, 16, 23, 212, 113) //24
+		SpriteFrame(-8, -11, 16, 23, 229, 113) //25
+		break
+	case 2
+		SpriteFrame(-8, -11, 16, 23, 178, 137) //24
+		SpriteFrame(-8, -11, 16, 23, 195, 137) //25
+		break
+	end switch
+	
+	SpriteFrame(0, 0, 71, 11, 120, 46) //26 Best Time
+	SpriteFrame(0, 0, 84, 11, 145, 58) //27 New Record
+	SpriteFrame(0, 0, 29, 4, 1, 45) //28 Time Marker
+	SpriteFrame(-4, -1, 16, 16, 209, 41) //29 Results Triangle
+	SpriteFrame(0, 0, 31, 11, 2, 17) //30 Time
+end event
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event

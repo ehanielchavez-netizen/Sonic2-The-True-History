@@ -1,0 +1,1173 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: Menu Control Object
+// Script Author: Christan Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+//-------Aliases-------//
+private alias 2 : TYPE_MENUCONTROL
+
+// Function declarations
+reserve function MenuControl_Function0
+reserve function MenuControl_Function1
+reserve function TRH_EraPage
+
+// Static Values
+public value MenuControl_value2 = 0;
+public value MenuControl_value3 = 0;
+public value MenuControl_value4 = 0;
+public value MenuControl_value5 = 0;
+public value MenuControl_value1 = 0;
+public value MenuControl_value6 = 0;
+
+// TRH VIDEO WARP POINT (menu)
+private value TRH_mvidVideo = 0;
+private value TRH_mvidTarget = 0;
+private value TRH_mvidTotal = 0;
+private value TRH_mvidFrame = 0;
+private value TRH_mvidTimer = 0;
+private value TRH_mvidSheet = 0;
+private value TRH_mvidBase = 0;
+private value TRH_mvidActive = 0;
+
+// Tables
+public table MenuControl_table2
+	1, 9, 9, 2, 1, 1, 2, 4
+end table
+
+public table MenuControl_table3
+	4, 1, 2, 6
+end table
+
+public table MenuControl_table4
+	1, 1, 2, 4
+end table
+
+public table MenuControl_table1
+	0, 0, 0
+end table
+
+public table MenuControl_table5
+	3, 3, 3, 11, 16, 16, 16, 4
+end table
+
+//Each Menu Selection has 6 numners
+	//Hightlight left or right
+	//Highlight line
+	//Stage List on load
+	//Stage on load
+	//Entry to go to on left or right press (67 for sound test)
+	//Icon used
+
+public table MenuControl_table0
+	0, 0,  1, 0,  15, 1		//0 - 5
+	0, 1,  1, 1,  16, 1		//6 - 11
+	0, 3,  1, 2,  18, 2		//12 - 17
+	0, 4,  1, 3,  18, 2		//18 - 23
+	0, 6,  1, 4,  19, 3		//24 - 29
+	0, 7,  1, 5,  19, 3		//30 - 35
+	0, 9,  1, 6,  20, 4		//36 - 41
+	0, 10, 1, 7,  20, 4		//42 - 47
+	0, 12, 1, 8,  21, 5		//48 - 53
+	0, 13, 1, 9,  21, 5		//54 - 59
+	0, 15, 1, 10, 22, 6		//60 - 65
+	0, 16, 1, 11, 22, 6		//66 - 71
+	0, 18, 1, 12, 12, 8		//72 - 77
+	0, 19, 1, 13, 13, 8		//78 - 83
+	0, 22, 0, 6,  68, 0		//84 - 89
+	1, 0,  1, 14, 0, 9		//90 - 95
+	1, 1,  1, 15, 1, 9		//96 - 101
+	1, 2,  1, 16, 1, 9		//102 - 107
+	1, 3,  1, 17, 2, 10		//108 - 113
+	1, 6,  1, 18, 4, 11		//114 - 119
+	1, 9,  1, 19, 6, 12		//120 - 125
+	1, 12, 3, 0,  69, 13	//126 - 131
+	1, 15, 0, 0,  67, 0		//132 - 137
+	1, 16, 1, 21,  23, 0		//138 - 143   Wood a1
+	1, 17, 1, 22,  24, 0		//144 - 149   Wood a2
+	1, 18, 1, 23,  25, 0		//150 - 155   Sand Shower a1
+	1, 19, 1, 24,  26, 0		//156 - 161   Sand Shower a2
+	1, 20, 1, 25,  27, 0		//162 - 167   Ocean Wind a1
+	1, 21, 1, 26,  28, 0		//168 - 173   Ocean Wind a2
+	1, 22, 1, 27,  29, 0		//174 - 179   Tropical Sun a1
+	1, 23, 1, 28,  30, 0		//180 - 185   Tropical Sun a2
+	1, 24, 1, 29,  31, 0		//186 - 191   Blue Lake
+	1, 25, 1, 30,  32, 0		//192 - 197   Rocky Winter a1
+	1, 26, 1, 31,  33, 0		//198 - 203   Rocky Winter a2
+	1, 27, 1, 32,  34, 0		//204 - 209   Mystic Cave a1
+	1, 28, 1, 33,  35, 0		//210 - 215   Mystic Cave a2
+	1, 29, 1, 34,  36, 0		//216 - 221   Rock World a1
+	1, 30, 1, 35,  37, 0		//222 - 227   Rock World a2
+	1, 31, 1, 36,  38, 0		//228 - 233   Genocide City a1
+	1, 32, 1, 37,  39, 0		//234 - 239   Cyber City a1
+	1, 18, 1, 20, 12, 7		//138 - 143
+end table
+
+
+function MenuControl_Function0
+	//if object[+1].value0 < 8
+	//	SetTableValue(object[+1].value0, 129, MenuControl_table0)
+	//end if
+	
+	GetTableValue(temp0, MenuControl_value3, MenuControl_table2)
+	if temp0 == object[+1].value0
+		MenuControl_value3++
+		if MenuControl_value3 == 8
+			MenuControl_value3 = 0
+			stage.debugMode = 1
+			PlaySfx(SfxName[Ring L], 0)
+		end if
+	else
+		MenuControl_value3 = 0
+	end if
+	GetTableValue(temp0, MenuControl_value4, MenuControl_table3)
+	if temp0 == object[+1].value0
+		MenuControl_value4++
+		if MenuControl_value4 == 4
+			MenuControl_value4 = 0
+			specialStage.emeralds = 127
+			PlaySfx(SfxName[Emerald], 0)
+			StopMusic()
+		end if
+	else
+		MenuControl_value4 = 0
+	end if
+	if MenuControl_value3 < 2
+		GetTableValue(temp0, MenuControl_value5, MenuControl_table4)
+		if temp0 == object[+1].value0
+			MenuControl_value5++
+			if MenuControl_value5 == 4
+				MenuControl_value5 = 0
+				player.continues = 14
+				PlaySfx(SfxName[Continue], 0)
+			end if
+		else
+			MenuControl_value5 = 0
+		end if
+	else
+		MenuControl_value5 = 0
+	end if
+	if stage.debugMode == 1
+		GetTableValue(temp0, MenuControl_value6, MenuControl_table5)
+		if temp0 == object[+1].value0
+			MenuControl_value6++
+			if MenuControl_value6 == 8
+				MenuControl_value6 = 0
+				SetTableValue(2, 122, MenuControl_table0)
+				SetTableValue(11, 123, MenuControl_table0)
+				PlaySfx(SfxName[Ring L], 0)
+				saveRAM[46] = 1
+			end if
+		else
+			MenuControl_value6 = 0
+		end if
+	end if
+end function
+
+
+function MenuControl_Function1
+	if object.value4 == 0
+		object.value4 = 30
+		switch object[+1].value0
+		case 0
+			break
+		case 1
+			SetMusicTrack("Results.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 2
+			SetMusicTrack("EmeraldHill.ogg", 0, 0x254AE)
+			PlayMusic(0)
+			break
+		case 3
+			SetMusicTrack("MysticCave2.ogg", 0, 0x48EF)
+			PlayMusic(0)
+			break
+		case 4
+			SetMusicTrack("OilOcean.ogg", 0, 0x47AC4)
+			PlayMusic(0)
+			break
+		case 5
+			SetMusicTrack("Metropolis.ogg", 0, 0x4B882)
+			PlayMusic(0)
+			break
+		case 6
+			SetMusicTrack("HillTop.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 7
+			SetMusicTrack("AquaticRuin.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 8
+			SetMusicTrack("CasinoNight2.ogg", 0, 0x1767C)
+			PlayMusic(0)
+			break
+		case 9
+			SetMusicTrack("CasinoNight.ogg", 0, 0xF564)
+			PlayMusic(0)
+			break
+		case 10
+			SetMusicTrack("DeathEgg.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 11
+			SetMusicTrack("MysticCave.ogg", 0, 0x1841C)
+			PlayMusic(0)
+			break
+		case 12
+			SetMusicTrack("EmeraldHill2.ogg", 0, 0x184F4)
+			PlayMusic(0)
+			break
+		case 13
+			SetMusicTrack("SkyChase.ogg", 0, 0x3066D)
+			PlayMusic(0)
+			break
+		case 14
+			SetMusicTrack("ChemicalPlant.ogg", 0, 0xA7224)
+			PlayMusic(0)
+			break
+		case 15
+			SetMusicTrack("WingFortress.ogg", 0, 0x18622)
+			PlayMusic(0)
+			break
+		case 16
+			SetMusicTrack("Extra.ogg", 0, 0xE9CC)
+			PlayMusic(0)
+			break
+		case 17
+			SetMusicTrack("Options.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 18
+			SetMusicTrack("SpecialStage.ogg", 0, 0x79404)
+			PlayMusic(0)
+			break
+		case 19
+			SetMusicTrack("Boss.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 20
+			SetMusicTrack("FinalBoss.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 21
+			SetMusicTrack("Ending.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 22
+			SetMusicTrack("Super.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 23
+			SetMusicTrack("Invincibility.ogg", 0, 0x9717)
+			PlayMusic(0)
+			break
+		case 24
+			PlaySfx(SfxName[Life], 0)
+			PauseMusic()
+			ResetObjectEntity(25, TypeName[Music Event], 2, 0, 0)
+			object[25].priority = PRIORITY_ACTIVE
+			break
+		case 25
+			SetMusicTrack("TitleScreen.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 26
+			SetMusicTrack("ActComplete.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 27
+			SetMusicTrack("GameOver.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 28
+			SetMusicTrack("Continue.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 29
+			StopMusic()
+			PlaySfx(SfxName[Emerald], 0)
+			break
+		case 30
+			SetMusicTrack("Credits.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		case 31
+			SetMusicTrack("Drowning.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		// ---- PARTE 3: PISTAS DEL MOD (Sound Test 0x20 - 0x28) ----
+		// Order del usuario: BlueLake, OceanWind, TropicalSun, RockyWinter,
+		// SandShower, Wood, CyberCity, BossAttack, TitleAllClear.
+		// Loop points = mismos valores que usa cada zona en su Setup
+		//   (MUSIC_LOOP_BLZ=1, MUSIC_LOOP_TSZ_1P=1, MUSIC_LOOP_OWZ_1P=1).
+		case 32 // 0x20
+			SetMusicTrack("BlueLake.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 33 // 0x21
+			SetMusicTrack("OceanWind.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 34 // 0x22
+			SetMusicTrack("TropicalSun.ogg", 0, 1)
+			PlayMusic(0)
+			break
+		case 35 // 0x23
+			SetMusicTrack("RockyWinter.ogg", 0, 0x48F0)
+			PlayMusic(0)
+			break
+		case 36 // 0x24
+			SetMusicTrack("SandShower.ogg", 0, 0x48F0)
+			PlayMusic(0)
+			break
+		case 37 // 0x25
+			SetMusicTrack("Wood.ogg", 0, 0x9B0AA)
+			PlayMusic(0)
+			break
+		case 38 // 0x26
+			SetMusicTrack("CyberCity.ogg", 0, 0x9B0AA)
+			PlayMusic(0)
+			break
+		case 39 // 0x27
+			SetMusicTrack("BossAttack.ogg", 0, 4820416)
+			PlayMusic(0)
+			break
+		case 40 // 0x28
+			SetMusicTrack("TitleAllClear.ogg", 0, 0)
+			PlayMusic(0)
+			break
+		end switch
+	end if
+end function
+
+
+	// ------------------------------------------------------------------
+	// TRH - NIVEL SELECT PAGINADO POR EPOCAS
+	// object.value5 = pagina actual (0..5)
+	// object.value6 = ultima fila accesible de la pagina
+	// temp0 = pagina destino. Reconstruye MENU_1/MENU_2 y la tabla.
+	// El WARP POINT de cada pagina cambia de epoca con Izq/Dcha.
+	// ------------------------------------------------------------------
+public table TRH_zoneCount_table0
+	10, 8, 6, 6, 3
+end table
+
+public table TRH_zoneOff_table0
+	0, 10, 18, 24, 30
+end table
+
+public table TRH_zoneListPos_table0
+	// PAGINA 0 (PRESENT) - indices de la lista de stages (uno por acto)
+	0, 1,
+	2, 3,
+	4, 5,
+	6, 7,
+	8, 9,
+
+	// PAGINA 1 (PAST)
+	10, 11,
+	12, 13,
+	14, 15,
+	16, 17,
+
+	// PAGINA 2 (RUINED PRESENT)
+	24, 25,
+	22, 23,
+	20, 21,
+
+	// PAGINA 3 (FUTURE)
+	26, 27,
+	28, 29,
+	30, 46,
+
+	// PAGINA 4 (LAST BATTLE)
+	34, 31, 32
+end table
+
+event ObjectMain
+	object[+1].xpos = screen.xcenter
+	object[+1].xpos += 118
+	switch object.state
+	case 0
+		object.value0 = 320
+		SetScreenFade(0, 0, 0, object.value0)
+		object[+1].ypos = 160
+		object[+1].priority = PRIORITY_ACTIVE
+		object.state++
+		break
+	case 1
+		if object.value0 > 0
+			object.value0 -= 16
+		else
+			PlayMusic(0)
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, object.value0)
+		break
+	case 2
+		if MenuControl_value2 == 0
+			if inputDown.down == 1
+				object.value1 = 0
+				object.value2++
+				if object.value2 == 1
+					object.value7 = 1
+					object.value3++
+				end if
+				object.value2 %= 12
+			else
+				if inputDown.up == 1
+					object.value2 = 0
+					object.value1++
+					if object.value1 == 1
+						object.value7 = -1
+						object.value3--
+					end if
+					object.value1 %= 12
+				else
+					object.value1 = 0
+					object.value2 = 0
+				end if
+			end if
+		temp0 = object.value6
+			if object.value3 > temp0
+				object.value3 = 0
+			end if
+			if object.value3 < 0
+				object.value3 = temp0
+			end if
+			// TRH - omitir filas de relleno (value[5] == 254)
+			if object.value7 == 0
+				object.value7 = 1
+			end if
+			temp1 = object.value3
+			temp1 *= 6
+			temp1 += 5
+			GetTableValue(temp2, temp1, MenuControl_table0)
+			while temp2 == 254
+				temp1 = object.value7
+				object.value3 += temp1
+				if object.value3 > temp0
+					object.value3 = 0
+				end if
+				if object.value3 < 0
+					object.value3 = temp0
+				end if
+				temp1 = object.value3
+				temp1 *= 6
+				temp1 += 5
+				GetTableValue(temp2, temp1, MenuControl_table0)
+			loop
+			temp0 = object.value3
+			temp0 *= 6
+			temp0++
+			GetTableValue(temp2, temp0, MenuControl_table0)
+			temp0 += 3
+			GetTableValue(temp1, temp0, MenuControl_table0)
+			switch temp1
+			case 250 // WARP POINT - VIDEO
+				object[+1].value1 = 0
+				temp1 = 0
+				if inputPress.left == 1
+					temp1 = -1
+				end if
+				if inputPress.right == 1
+					temp1 = 1
+				end if
+				if temp1 > 0
+					temp0 = object.value5
+					temp0++
+					temp0 %= 5
+					PlaySfx(SfxName[Warp], 0)
+					CallFunction(TRH_EraPage)
+				end if
+				if temp1 < 0
+					temp0 = object.value5
+					temp0--
+					while temp0 < 0
+						temp0 += 5
+					loop
+					PlaySfx(SfxName[Warp], 0)
+					CallFunction(TRH_EraPage)
+				end if
+				temp0 = inputPress.start
+				temp0 |= inputPress.buttonA
+				if temp0 == 1
+					inputPress.start = 0
+					if object.value5 == 0
+						TRH_mvidVideo = 1
+						TRH_mvidTarget = 10
+						TRH_mvidTotal = 60
+					else
+						TRH_mvidVideo = 2
+						TRH_mvidTarget = 20
+						TRH_mvidTotal = 160
+					end if
+					TRH_mvidFrame = 0
+					TRH_mvidTimer = 0
+					TRH_mvidActive = 1
+					object.state = 99
+				end if
+				break
+			default
+				object[+1].value1 = 0
+				temp3 = 0
+				if inputPress.left == 1
+					temp3 = -1
+				end if
+				if inputPress.right == 1
+					temp3 = 1
+				end if
+				if temp3 > 0
+					temp0 = object.value5
+					temp0++
+					temp0 %= 5
+					PlaySfx(SfxName[Warp], 0)
+					CallFunction(TRH_EraPage)
+				end if
+				if temp3 < 0
+					temp0 = object.value5
+					temp0--
+					while temp0 < 0
+						temp0 += 5
+					loop
+					PlaySfx(SfxName[Warp], 0)
+					CallFunction(TRH_EraPage)
+				end if
+				if inputPress.buttonA == 1
+					inputPress.start = 1
+				end if
+			break
+			case 67 //Sound Test
+				if object.value4 > 0
+					object.value4--
+				end if
+				object[+1].value1 = 16
+				if inputPress.buttonA == 1
+					object[+1].value0 += 16
+				end if
+				if inputPress.left == 1
+					object[+1].value0--
+				end if
+				if inputPress.right == 1
+					object[+1].value0++
+				end if
+				// PARTE 3: Sound Test ampliado de 32 (00-1F) a 48 pistas (00-2F).
+				// 0x20-0x28 = pistas del mod (ver cases 32-40 de Function1).
+				// %= 48 en vez de &= 31 porque 48 no es 2^n-1 (no es mascara).
+				object[+1].value0 %= 48
+				if object[+1].value0 < 0
+					object[+1].value0 += 48
+				end if
+				if inputPress.buttonB == 1
+					CallFunction(MenuControl_Function1)
+					CallFunction(MenuControl_Function0)
+				end if
+				if inputPress.buttonC == 1
+					CallFunction(MenuControl_Function1)
+					CallFunction(MenuControl_Function0)
+				end if
+				break
+			case 68 //Character Select
+				temp1 = 0				
+				object[+1].value1 = 0
+				if inputPress.left == 1
+					stage.playerListPos--
+					while stage.playerListPos < 0
+						stage.playerListPos += 5
+					loop
+					temp1 = 1
+				end if
+				if inputPress.right == 1
+					stage.playerListPos++
+					stage.playerListPos %= 5
+					temp1 = 1
+				end if
+				if temp1 == 1
+					switch stage.playerListPos
+						case 0
+							EditMenuEntry(MENU_1, "SONIC", 22, 1)
+							SetTableValue(0, 89, MenuControl_table0)
+							SetTableValue(0, 137, MenuControl_table0)
+							break
+						case 1
+							EditMenuEntry(MENU_1, "TAILS", 22, 1)
+							SetTableValue(15, 89, MenuControl_table0)
+							SetTableValue(15, 137, MenuControl_table0)
+							break
+						case 2
+							EditMenuEntry(MENU_1, "KNUCKLES", 22, 1)
+							SetTableValue(16, 89, MenuControl_table0)
+							SetTableValue(16, 137, MenuControl_table0)
+							break
+						case 3
+							EditMenuEntry(MENU_1, "SONIC & TAILS", 22, 1)
+							SetTableValue(0, 89, MenuControl_table0)
+							SetTableValue(0, 137, MenuControl_table0)
+							break
+						case 4
+							EditMenuEntry(MENU_1, "KNUCKLES & TAILS", 22, 1)
+							SetTableValue(16, 89, MenuControl_table0)
+							SetTableValue(16, 137, MenuControl_table0)
+							break
+					end switch
+				end if
+				break
+			case 69 //special Stage			
+				object[+1].value1 = 0
+				temp1 = 0
+				if inputPress.left == 1
+					GetTableValue(temp2, 129, MenuControl_table0)
+					temp2--
+					while temp2 < 0
+						temp2 += 8
+					loop
+					temp1 = 1
+				end if
+				if inputPress.right == 1
+					GetTableValue(temp2, 129, MenuControl_table0)
+					temp2++
+					temp2 %= 8
+					temp1 = 1
+				end if
+				if temp1 == 1
+					switch temp2
+						case 0
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@1", 12, 0)
+							break
+						case 1
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@2", 12, 0)
+							break
+						case 2
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@3", 12, 0)
+							break
+						case 3
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@4", 12, 0)
+							break
+						case 4
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@5", 12, 0)
+							break
+						case 5
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@6", 12, 0)
+							break
+						case 6
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@7", 12, 0)
+							break
+						case 7
+							EditMenuEntry(MENU_2, "SPECIAL STAGE@@?", 12, 0)
+							break
+					end switch
+					SetTableValue(temp2, 129, MenuControl_table0)
+				end if				
+				if inputPress.buttonA == 1
+					inputPress.start = 1
+				end if
+				break
+			end switch
+			temp0 = object.value3
+			temp0 *= 6
+			GetTableValue(temp1, temp0, MenuControl_table0)
+			temp0++
+			if temp1 == 0
+				menu2.selection = -1
+				GetTableValue(menu1.selection, temp0, MenuControl_table0)
+			else
+				menu1.selection = -1
+				GetTableValue(menu2.selection, temp0, MenuControl_table0)
+			end if
+			temp0 += 4
+			GetTableValue(BGAnimation_value0, temp0, MenuControl_table0)
+			if inputPress.start == 1
+				// TRH FIX 3: Special Stage DESACTIVADO - se conserva la fila 21 pero no se lanza
+				if object.value3 != 21
+					object.state = 3
+				end if
+			end if
+		end if
+		break
+	case 3
+		if object.value0 < 256
+			music.volume -= 10
+			object.value0 += 16
+			SetScreenFade(0, 0, 0, object.value0)
+		else
+			StopMusic()
+			// TRH FIX: mapeo directo por pagina + entrada visual del menu.
+			// No usa TRH_zoneListPos_table0 ni object.value3 para zonas.
+			temp3 = 10
+			switch object.value5
+			case 1
+				temp3 = 8
+				break
+			case 2
+				temp3 = 6
+				break
+			case 3
+				temp3 = 6
+				break
+			case 4
+				temp3 = 3
+				break
+			end switch
+			temp4 = 0
+			if menu1.selection >= 1
+				if menu1.selection <= temp3
+					temp4 = 1
+					temp2 = 0
+					switch object.value5
+					case 0
+						temp2 = menu1.selection
+						temp2--
+						break
+					case 1
+						temp2 = menu1.selection
+						temp2 += 9
+						break
+					case 2
+						temp2 = menu1.selection
+						temp2 += 19
+						break
+					case 3
+						if menu1.selection <= 4
+							temp2 = menu1.selection
+							temp2 += 25
+						else
+							if menu1.selection == 5
+								temp2 = 30
+							else
+								temp2 = 46
+							end if
+						end if
+						break
+					case 4
+						if menu1.selection == 1
+							temp2 = 34
+						else
+							if menu1.selection == 2
+								temp2 = 31
+							else
+								temp2 = 32
+							end if
+						end if
+						break
+					end switch
+					stage.activeList = 1
+					stage.listPos = temp2
+					LoadStage()
+					SetScreenFade(0, 0, 0, 255)
+				end if
+			end if
+			if temp4 == 0
+				temp0 = object.value3
+				temp0 *= 6
+				temp0 += 2
+				GetTableValue(temp1, temp0, MenuControl_table0)
+				temp0++
+				GetTableValue(temp2, temp0, MenuControl_table0)
+				stage.activeList = temp1
+				stage.listPos = temp2
+				LoadStage()
+				SetScreenFade(0, 0, 0, 255)
+			end if
+		end if
+		break
+	case 4
+		if object.value0 < 768
+			music.volume -= 10
+			object.value0 += 8
+			SetScreenFade(208, 255, 224, object.value0)
+		else
+			StopMusic()
+			temp0 = object.value3
+			temp0 *= 6
+			temp0 += 2
+			GetTableValue(temp1, temp0, MenuControl_table0)
+			temp0++
+			GetTableValue(temp2, temp0, MenuControl_table0)
+			stage.activeList = temp1
+			stage.listPos = temp2
+			LoadStage()
+			SetScreenFade(208, 255, 224, 255)
+		end if
+		break
+	case 99
+		if TRH_mvidFrame == 0
+			if TRH_mvidTimer == 0
+				object.drawOrder = 6
+				RemoveSpriteSheet("Data/Sprites/LevelSelect/Text.gif")
+				RemoveSpriteSheet("Data/Sprites/Menus/MainMenuNewCore.gif")
+				if TRH_mvidVideo == 1
+					LoadPalette("TRH_WarpP1Pal.act", 0, 0, 0, 256)
+					LoadSpriteSheet("TRH/WarpP1.bmp")
+					SetMusicTrack("TRH_WarpPoint1.ogg", 0, 0)
+					TRH_mvidBase = 0
+				else
+					LoadPalette("TRH_WarpP2Pal.act", 0, 0, 0, 256)
+					LoadSpriteSheet("TRH/WarpP2.bmp")
+					SetMusicTrack("TRH_WarpPoint2.ogg", 0, 0)
+					TRH_mvidBase = 240
+				end if
+				PlayMusic(0)
+			end if
+		end if
+		TRH_mvidTimer++
+		if TRH_mvidTimer >= 6
+			TRH_mvidTimer = 0
+			TRH_mvidFrame++
+		end if
+		if TRH_mvidFrame >= TRH_mvidTotal
+			StopMusic()
+			TRH_mvidActive = 0
+			if TRH_mvidTarget == 20
+				saveRAM[2009] = 0
+			end if
+			stage.activeList = 1
+			stage.listPos = TRH_mvidTarget
+			LoadStage()
+		end if
+		break
+	end switch
+end event
+
+
+
+reserve function TRH_PlayerLabel
+
+function TRH_PlayerLabel
+	// ranura 22 de MENU_1 = fila 14 de la tabla (indices originales del base)
+	switch stage.playerListPos
+	case 0
+		EditMenuEntry(MENU_1, "SONIC", 22, 1)
+		SetTableValue(0, 89, MenuControl_table0)
+		SetTableValue(0, 137, MenuControl_table0)
+		break
+	case 1
+		EditMenuEntry(MENU_1, "TAILS", 22, 1)
+		SetTableValue(15, 89, MenuControl_table0)
+		SetTableValue(15, 137, MenuControl_table0)
+		break
+	case 2
+		EditMenuEntry(MENU_1, "KNUCKLES", 22, 1)
+		SetTableValue(16, 89, MenuControl_table0)
+		SetTableValue(16, 137, MenuControl_table0)
+		break
+	case 3
+		EditMenuEntry(MENU_1, "SONIC & TAILS", 22, 1)
+		SetTableValue(0, 89, MenuControl_table0)
+		SetTableValue(0, 137, MenuControl_table0)
+		break
+	case 4
+		EditMenuEntry(MENU_1, "KNUCKLES & TAILS", 22, 1)
+		SetTableValue(16, 89, MenuControl_table0)
+		SetTableValue(16, 137, MenuControl_table0)
+		break
+	end switch
+end function
+
+reserve function TRH_SpecialLabel
+
+function TRH_SpecialLabel
+	// ranura 12 de MENU_2 = fila 21 de la tabla
+	GetTableValue(temp6, 129, MenuControl_table0)
+	switch temp6
+	case 0
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@1", 12, 0)
+		break
+	case 1
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@2", 12, 0)
+		break
+	case 2
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@3", 12, 0)
+		break
+	case 3
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@4", 12, 0)
+		break
+	case 4
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@5", 12, 0)
+		break
+	case 5
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@6", 12, 0)
+		break
+	case 6
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@7", 12, 0)
+		break
+	default
+		EditMenuEntry(MENU_2, "SPECIAL STAGE@@?", 12, 0)
+		break
+	end switch
+end function
+
+
+function TRH_EraPage
+	object.value5 = temp0
+	object.value7 = 1
+	object.value6 = 22		// +1: fila 22 = PLAYER entry
+
+	// ---- TRH FIX 5: marca de EPILOGO ----
+	// 1 = pagina 6 [EPILOGO]. Emerald Hill (acto 8) se carga SIN enemigos.
+	// 0 = cualquier otra pagina: el Emerald Hill normal de Now 1.
+	saveRAM[2008] = 0
+
+	// ---- 1) guardar el numero de Special Stage (fila 21, campo 3) ----
+	GetTableValue(temp7, 129, MenuControl_table0)
+
+	// ---- 2) plantilla: 25 filas marcador 254 (value[5] = 254) ----
+	temp0 = 0
+	while temp0 < 25
+		temp1 = temp0
+		temp1 *= 6
+		SetTableValue(0, temp1, MenuControl_table0)
+		temp1++
+		SetTableValue(0, temp1, MenuControl_table0)
+		temp1++
+		SetTableValue(0, temp1, MenuControl_table0)
+		temp1++
+		SetTableValue(0, temp1, MenuControl_table0)
+		temp1++
+		SetTableValue(0, temp1, MenuControl_table0)
+		temp1++
+		SetTableValue(254, temp1, MenuControl_table0)
+		temp0++
+	loop
+
+	// ---- 3) filas de utilidad en sus indices originales ----
+	// fila 14 = JUGADOR  (0, 22, 0, 6, 68, 0)
+	SetTableValue(0, 84, MenuControl_table0)
+	SetTableValue(22, 85, MenuControl_table0)
+	SetTableValue(0, 86, MenuControl_table0)
+	SetTableValue(6, 87, MenuControl_table0)
+	SetTableValue(68, 88, MenuControl_table0)
+	SetTableValue(0, 89, MenuControl_table0)
+	// fila 21 = SOUND TEST (columna derecha, ranura 12)
+	SetTableValue(1, 126, MenuControl_table0)
+	SetTableValue(12, 127, MenuControl_table0)
+	SetTableValue(0, 128, MenuControl_table0)
+	SetTableValue(0, 129, MenuControl_table0)
+	SetTableValue(67, 130, MenuControl_table0)
+	SetTableValue(0, 131, MenuControl_table0)
+	// fila 22 = HIDDEN PALACE (columna derecha)
+	SetTableValue(1, 132, MenuControl_table0)
+	SetTableValue(15, 133, MenuControl_table0)
+	SetTableValue(1, 134, MenuControl_table0)
+	SetTableValue(35, 135, MenuControl_table0)
+	SetTableValue(0, 136, MenuControl_table0)
+	SetTableValue(0, 137, MenuControl_table0)
+	// fila 23 = WARP POINT  (1, 18, 0, 0, 250, 0)
+	SetTableValue(1, 138, MenuControl_table0)
+	SetTableValue(18, 139, MenuControl_table0)
+	SetTableValue(0, 140, MenuControl_table0)
+	SetTableValue(0, 141, MenuControl_table0)
+	SetTableValue(250, 142, MenuControl_table0)
+	SetTableValue(0, 143, MenuControl_table0)
+	// fila 24 = OLYMPUS V1  (1, 19, 1, 20, 0, 0)
+	// Version 1 con cinem?!tica (7a esmeralda + terremoto + transformacion,
+	// primera vez = saveRAM[2007] == 0). Mismo listPos 20 que la V2 de
+	// la pagina [BAD FUTURE]. field4 = 0 -> case default = carga normal
+	// de zona (activeList 1, listPos 20).
+	SetTableValue(1, 144, MenuControl_table0)
+	SetTableValue(19, 145, MenuControl_table0)
+	SetTableValue(1, 146, MenuControl_table0)
+	SetTableValue(35, 147, MenuControl_table0)
+	SetTableValue(0, 148, MenuControl_table0)
+	SetTableValue(0, 149, MenuControl_table0)
+	SetTableValue(temp7, 129, MenuControl_table0)
+
+	// ---- 4) zonas de la pagina en las filas 0..n-1 ----
+	temp0 = object.value5
+	GetTableValue(temp2, temp0, TRH_zoneCount_table0)
+	GetTableValue(temp3, temp0, TRH_zoneOff_table0)
+	temp4 = 0
+	while temp4 < temp2
+		temp5 = temp3
+		temp5 += temp4
+		GetTableValue(temp6, temp5, TRH_zoneListPos_table0)
+		temp5 = temp4
+		temp5 *= 6
+		SetTableValue(0, temp5, MenuControl_table0)
+		temp5++
+		temp7 = temp4
+		temp7++
+		// TRH: la pagina FUTURE ya no tiene filas fantasma
+		// (6 zonas reales - Act1 y Act2 de cada una)
+		SetTableValue(temp7, temp5, MenuControl_table0)
+		temp5++
+		SetTableValue(1, temp5, MenuControl_table0)
+		temp5++
+		SetTableValue(temp6, temp5, MenuControl_table0)
+		temp5++
+		SetTableValue(temp4, temp5, MenuControl_table0)
+		temp5++
+		SetTableValue(0, temp5, MenuControl_table0)
+		temp4++
+	loop
+
+	// ---- 5) MENU_1: cabecera + zonas + relleno + JUGADOR en la ranura 22 ----
+	SetupMenu(MENU_1, 0, 3, 1)
+	SetupMenu(MENU_2, 0, 3, 1)
+	switch object.value5
+	case 0 // PRESENT
+		AddMenuEntry(MENU_1, "[PRESENT]          ", 0)
+		AddMenuEntry(MENU_1, "EMERALD@HILL@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "OCEAN@WIND@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "JUNGLE@WOODS@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "SAND@SHOWER@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "METROPOLIS@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		break
+	case 1 // PAST
+		AddMenuEntry(MENU_1, "[PAST]             ", 0)
+		AddMenuEntry(MENU_1, "TROPICAL@SUN@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "AQUATIC@RUIN@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "BLUE@OCEAN@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "HILL@TOP@@@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		break
+	case 2 // RUINED PRESENT
+		AddMenuEntry(MENU_1, "[RUINED PRESENT]   ", 0)
+		AddMenuEntry(MENU_1, "ROCK@WORLD@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "OIL@OCEAN@@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "MYSTIC@CAVE@@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		break
+	case 3 // FUTURE
+		AddMenuEntry(MENU_1, "[FUTURE]           ", 0)
+		AddMenuEntry(MENU_1, "CASINO@NIGHT@@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "CHEMICAL@PLANT 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		AddMenuEntry(MENU_1, "GENOCIDE@CITY@ 1", 1)
+		AddMenuEntry(MENU_1, "2", 1)
+		break
+	case 4 // LAST BATTLE
+		AddMenuEntry(MENU_1, "[LAST BATTLE]      ", 0)
+		AddMenuEntry(MENU_1, "SKY@CHASE@@@@@@ 1", 1)
+		AddMenuEntry(MENU_1, "WING@FORTRESS@@ 1", 1)
+		AddMenuEntry(MENU_1, "DEATH@EGG@@@@@@@ 1", 1)
+		break
+	end switch
+	GetTableValue(temp1, temp0, TRH_zoneCount_table0)
+	temp0 = 21
+	temp0 -= temp1
+	// TRH: pagina FUTURE sin etiquetas fantasma - PLAYER queda en la entrada 22
+	while temp0 > 0
+		AddMenuEntry(MENU_1, "                ", 0)
+		temp0--
+	loop
+	AddMenuEntry(MENU_1, "PLAYER:         ", 0)
+
+	// ---- 6) MENU_2: cabecera + relleno + utilidades en las ranuras 12/15/18 ----
+	temp0 = 11
+	while temp0 > 0
+		AddMenuEntry(MENU_2, "                ", 0)
+		temp0--
+	loop
+	AddMenuEntry(MENU_2, "                ", 0)
+	AddMenuEntry(MENU_2, "SOUND TEST      ", 1)
+	AddMenuEntry(MENU_2, "                ", 0)
+	AddMenuEntry(MENU_2, "                ", 0)
+	AddMenuEntry(MENU_2, "HIDDEN@PALACE@ 1", 1)
+	AddMenuEntry(MENU_2, "                ", 0)
+	AddMenuEntry(MENU_2, "                ", 0)
+
+	CallFunction(TRH_PlayerLabel)
+	object.value3 = 0
+end function
+
+
+
+event ObjectDraw
+	if TRH_mvidActive == 1
+		DrawRect(0, 0, screen.xsize, screen.ysize, 0, 0, 0, 255)
+		temp0 = TRH_mvidBase
+		temp0 += TRH_mvidFrame
+		temp1 = TRH_mvidFrame
+		temp1 %= 4
+		temp2 = TRH_mvidFrame
+		temp2 /= 4
+		if TRH_mvidVideo == 1
+			temp1 *= 256
+			temp2 *= 144
+			EditFrame(temp0, 0, 0, 256, 144, temp1, temp2)
+			temp2 = screen.xcenter
+			temp2 -= 128
+			temp3 = screen.ycenter
+			temp3 -= 72
+		else
+			temp1 *= 192
+			temp2 *= 108
+			EditFrame(temp0, 0, 0, 192, 108, temp1, temp2)
+			temp2 = screen.xcenter
+			temp2 -= 96
+			temp3 = screen.ycenter
+			temp3 -= 54
+		end if
+		DrawSpriteScreenXY(temp0, temp2, temp3)
+	else
+		temp0 = screen.xcenter
+		temp0 -= 13
+		DrawMenu(MENU_1, temp0, 25)
+		temp0 = screen.xcenter
+		temp0 += 142
+		DrawMenu(MENU_2, temp0, 25)
+	end if
+end event
+
+
+event ObjectStartup
+	LoadSpriteSheet("LevelSelect/Text.gif")
+	// Frames del video Warp Point (WarpP1: 4 columnas x 15 filas = 60)
+	temp3 = 0
+	while temp3 < 60
+		temp4 = temp3
+		temp4 %= 4
+		temp4 *= 256
+		temp5 = temp3
+		temp5 /= 4
+		temp5 *= 144
+		SpriteFrame(0, 0, 256, 144, temp4, temp5)
+		temp3++
+	loop
+	// WarpP2: 4 columnas x 40 filas = 160
+	temp3 = 0
+	while temp3 < 160
+		temp4 = temp3
+		temp4 %= 4
+		temp4 *= 192
+		temp5 = temp3
+		temp5 /= 4
+		temp5 *= 108
+		SpriteFrame(0, 0, 192, 108, temp4, temp5)
+		temp3++
+	loop
+	foreach (TypeName[Menu Control], arrayPos0, ALL_ENTITIES)
+		object[arrayPos0].priority = PRIORITY_ACTIVE
+	next
+	if stage.actNum < 3
+		options.stageSelectFlag = 1
+	end if
+	SetMusicTrack("Options.ogg", 0, 1)
+	temp0 = 0
+	CallFunction(TRH_EraPage)
+end event
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event	
+
+

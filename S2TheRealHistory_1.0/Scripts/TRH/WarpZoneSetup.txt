@@ -1,0 +1,230 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: TRH WARP POINT ZONE setup (Zone28 / listPos 46)
+//   Zona INDEPENDIENTE: sin agua, sin jefes, sin maquina del tiempo.
+//   Solo dibuja el ANILLO GIGANTE al final del nivel y viaja de epoca
+//   al tocarlo (misma tabla de destinos que la maquina del tiempo de
+//   HPZSetup, guidada por saveRAM[2000] = epoca actual).
+// ----------------------------------
+
+	// Coordenadas del anillo gigante en PIXELES = host WarpZoneSetup del
+	//   mapa restaurado 40x8 (pasillo + escaleras, backup pre24x10):
+	//   x=2432, y=336 (patron entidad=portal de esta zona: el anillo
+	//   queda sobre el tramo alto de las escaleras). Radio = 128px de
+	//   COLISION REAL => se toca CAMINANDO con margen (con 64 no alcanzaba).
+private alias 2432 : TRH_WR_X
+private alias 336 : TRH_WR_Y
+private alias 128 : TRH_WR_R
+
+// Static Values
+// one-shot del viaje (compartido aunque la escena tenga 2 instancias)
+private value TRH_wshot = 0;
+// contador del circulo de 8 Rings animados del portal
+private value TRH_wrRings = 0;
+// flag de TOQUE del portal (mismo nombre de maquina que en HPZSetup;
+//   aqui es un value privado del propio script)
+private value TRH_touch = 0;
+
+event ObjectMain
+	// PORTAL ANIMADO: 8 objetos Ring REALES alrededor del anillo gigante
+	//   (giran solos con ringFrame global y son coleccionables). Se crean
+	//   en ObjectMain (NUNCA en ObjectStartup: corrompe entidad[0], ver
+	//   HPZSetup) y RESPALWN cada 600 frames (patron de Global/Ring.txt).
+	TRH_wrRings++
+	if TRH_wrRings > 600
+		TRH_wrRings = 1
+	end if
+	if TRH_wrRings == 1
+		temp2 = 0
+		while temp2 < 8
+			switch temp2
+				case 0
+					temp0 = TRH_WR_X
+					temp0 += 44
+					temp1 = TRH_WR_Y
+					break
+				case 1
+					temp0 = TRH_WR_X
+					temp0 += 31
+					temp1 = TRH_WR_Y
+					temp1 += 31
+					break
+				case 2
+					temp0 = TRH_WR_X
+					temp1 = TRH_WR_Y
+					temp1 += 44
+					break
+				case 3
+					temp0 = TRH_WR_X
+					temp0 -= 31
+					temp1 = TRH_WR_Y
+					temp1 += 31
+					break
+				case 4
+					temp0 = TRH_WR_X
+					temp0 -= 44
+					temp1 = TRH_WR_Y
+					break
+				case 5
+					temp0 = TRH_WR_X
+					temp0 -= 31
+					temp1 = TRH_WR_Y
+					temp1 -= 31
+					break
+				case 6
+					temp0 = TRH_WR_X
+					temp1 = TRH_WR_Y
+					temp1 -= 44
+					break
+				case 7
+					temp0 = TRH_WR_X
+					temp0 += 31
+					temp1 = TRH_WR_Y
+					temp1 -= 31
+					break
+			end switch
+			temp0 <<= 16
+			temp1 <<= 16
+			CreateTempObject(TypeName[Ring], 0, temp0, temp1)
+			object[tempObjectPos].priority = PRIORITY_ACTIVE
+			object[tempObjectPos].drawOrder = 4
+			temp2++
+		loop
+	end if
+	// --- 1) gracia de spawn: no disparar en los primeros 30 frames ---
+	//   (sin esto, si Sonic spawna sobre el anillo, LoadStage() saldria
+	//   en el frame 1 y la carga se colgaba. En el corredor el jugador
+	//   spawna LEJOS (x=256 vs anillo x=2560) y no hay star post, asi
+	//   que basta gracia corta y el warp responde al primer toque).
+	if object.value0 < 30
+		object.value0++
+	end if
+	// --- 2) COLISION REAL con el anillo -> flag compartido TRH_touch ---
+	TRH_touch = 0
+	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+		temp0 = object[currentPlayer].ixpos
+		temp0 -= TRH_WR_X
+		if temp0 < 0
+			temp0 = 0
+			temp0 -= object[currentPlayer].ixpos
+			temp0 += TRH_WR_X
+		end if
+		if temp0 <= TRH_WR_R
+			temp1 = object[currentPlayer].iypos
+			temp1 -= TRH_WR_Y
+			if temp1 < 0
+				temp1 = 0
+				temp1 -= object[currentPlayer].iypos
+				temp1 += TRH_WR_Y
+			end if
+			if temp1 <= TRH_WR_R
+				TRH_touch = 1
+			end if
+		end if
+	next
+	// --- 3) viaje por epoca (tocando + gracia + one-shot) ---
+	if TRH_touch == 1
+		if object.value0 >= 30
+			if TRH_wshot == 0
+				TRH_wshot = 1
+				PlaySfx(SfxName[Exit SS], 0)
+				// destinos por EPOCA (saveRAM[2000]), misma tabla que la
+				//   maquina del tiempo de HPZSetup (listPos / nueva epoca):
+				//   0->0 era1 | 1->8 era2 | 2->34 era3
+				//   3->20 era4 (con 6 esmeraldas) / 36 era6
+				//   4->39 era5 / 36 era6 (127 esmeraldas)
+				//   5->44 era8 | 6->47 era7 | 7->44 era8
+				//   8->0 era1 (ciclo)
+				temp2 = 0
+				temp3 = 1
+				switch saveRAM[2000]
+					case 0
+						temp2 = 0
+						temp3 = 1
+						break
+					case 1
+						temp2 = 8
+						temp3 = 2
+						break
+					case 2
+						temp2 = 34
+						temp3 = 3
+						break
+					case 3
+						if specialStage.emeralds >= 63
+							temp2 = 20
+							temp3 = 4
+						else
+							temp2 = 36
+							temp3 = 6
+						end if
+						break
+					case 4
+						if specialStage.emeralds >= 127
+							temp2 = 39
+							temp3 = 5
+						else
+							temp2 = 36
+							temp3 = 6
+						end if
+						break
+					case 5
+						temp2 = 44
+						temp3 = 8
+						break
+					case 6
+						temp2 = 47
+						temp3 = 7
+						break
+					case 7
+						temp2 = 44
+						temp3 = 8
+						break
+					case 8
+						temp2 = 0
+						temp3 = 1
+						break
+					default
+						temp2 = 0
+						temp3 = 1
+						break
+				end switch
+				saveRAM[2000] = temp3
+				WriteSaveRAM()
+				// TRH: el motor no soporta PlayVideo (opcode inexistente).
+				//   Se elimina la reproduccion de video, la transicion
+				//   se hace con el fade + LoadStage de abajo.
+				stage.listPos = temp2
+				LoadStage()
+			end if
+		end if
+	end if
+end event
+
+event ObjectDraw
+	// anillo gigante en el final del nivel (coordenadas MUNDO:
+	//   DrawSpriteXY aplica la camara sola, igual que en HPZSetup).
+	temp0 = TRH_WR_X
+	temp0 <<= 16
+	temp1 = TRH_WR_Y
+	temp1 <<= 16
+	DrawSpriteXY(0, temp0, temp1)
+end event
+
+event ObjectStartup
+	// hoja y frame 0 del ANILLO GIGANTE (96x96, fondo transparente).
+	LoadSpriteSheet("TRH/GiantRing.gif")
+	SpriteFrame(-48, -48, 96, 96, 0, 0)
+	// musica del Warp Point = Olympus (MysticCave2), igual que HPZSetup.
+	SetMusicTrack("MysticCave2.ogg", 0, 1)
+	PlayMusic(0)
+end event
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event

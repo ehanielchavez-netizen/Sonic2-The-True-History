@@ -1,0 +1,130 @@
+// ----------------------------------
+// RSDK Project: Sonic 2 - The Real History
+// Script Description: TRH Text - mensaje "RECOLECTA LAS ESMERALDAS..." al inicio de Ancient
+// Script Author: S2TRH
+// ----------------------------------
+// Basado en el patron de Special/TextMessage.txt (SetupMenu + AddMenuEntry + DrawSpriteScreenXY).
+// Objeto dedicado con su propia hoja de fuentes para no tocar la logica de TSZSetup.
+//
+// object.value0 = timer (frames visibles = 360, unos 6 seg)
+// object.value1 = indice de linea (entrada de MENU_2) al dibujar
+// object.ypos   = altura de pantalla de la linea actual
+
+//-------Aliases-------//
+
+reserve function TRHText_DrawLine
+
+
+event ObjectMain
+	if object.value0 < 360
+		object.value0++
+	else
+		// se autodestruye tras mostrarse unos segundos
+		ResetObjectEntity(object.entityPos, TypeName[Blank Object], 0, 0, 0)
+	end if
+end event
+
+
+// Dibuja una linea de MENU_2 (entrada object.value1) centrada en pantalla.
+function TRHText_DrawLine
+	GetTextInfo(temp3, MENU_2, TEXTINFO_TEXTSIZE, object.value1, 0)
+	temp4 = temp3
+	temp4 <<= 2
+	FlipSign(temp4)
+	temp4 += screen.xcenter
+	temp4 += 4
+	temp0 = 0
+	while temp3 > 0
+		GetTextInfo(temp1, MENU_2, TEXTINFO_TEXTDATA, object.value1, temp0)
+		temp5 = 0
+		// mayusculas A-Z -> frames 10..35 (mapeo identico a TextMessage)
+		if temp1 > 64
+			if temp1 < 91
+				temp5 = temp1
+				temp5 -= 55
+			end if
+		end if
+		// el espacio (frame 0) no se dibuja pero avanza 8px
+		if temp5 > 0
+			DrawSpriteScreenXY(temp5, temp4, object.ypos)
+		end if
+		temp4 += 8
+		temp0++
+		temp3--
+	loop
+end function
+
+
+event ObjectDraw
+	if object.value0 < 360
+		object.ypos = 92
+		object.value1 = 0
+		CallFunction(TRHText_DrawLine)
+		object.ypos += 20
+		object.value1 = 1
+		CallFunction(TRHText_DrawLine)
+		object.ypos += 20
+		object.value1 = 2
+		CallFunction(TRHText_DrawLine)
+	end if
+end event
+
+
+event ObjectStartup
+	LoadSpriteSheet("Special/Objects.gif")
+	// Fuentes copiadas EXACTAS de Special/TextMessage.txt para que los indices de frame
+	// coincidan con el mapeo de caracteres (A=10 ... Z=35).
+	SpriteFrame(-4, -8, 8, 15, 291, 42)
+	SpriteFrame(-4, -8, 8, 15, 300, 42)
+	SpriteFrame(-4, -8, 8, 15, 309, 42)
+	SpriteFrame(-4, -8, 8, 15, 318, 42)
+	SpriteFrame(-4, -8, 8, 15, 327, 42)
+	SpriteFrame(-4, -8, 8, 15, 336, 42)
+	SpriteFrame(-4, -8, 8, 15, 345, 42)
+	SpriteFrame(-4, -8, 8, 15, 354, 42)
+	SpriteFrame(-4, -8, 8, 15, 363, 42)
+	SpriteFrame(-4, -8, 8, 15, 372, 42)
+	SpriteFrame(-4, -8, 8, 15, 291, 26)
+	SpriteFrame(-4, -8, 8, 15, 300, 26)
+	SpriteFrame(-4, -8, 8, 15, 309, 26)
+	SpriteFrame(-4, -8, 8, 15, 318, 26)
+	SpriteFrame(-4, -8, 8, 15, 327, 26)
+	SpriteFrame(-4, -8, 8, 15, 336, 26)
+	SpriteFrame(-4, -8, 8, 15, 345, 26)
+	SpriteFrame(-4, -8, 8, 15, 354, 26)
+	SpriteFrame(-5, -8, 8, 15, 363, 26) //I
+	SpriteFrame(-4, -8, 8, 15, 372, 26)
+	SpriteFrame(-4, -8, 8, 15, 381, 26)
+	SpriteFrame(-4, -8, 8, 15, 390, 26)
+	SpriteFrame(-4, -8, 8, 15, 399, 26)
+	SpriteFrame(-6, -8, 9, 15, 446, 10) //N
+	SpriteFrame(-4, -8, 8, 15, 417, 26)
+	SpriteFrame(-4, -8, 8, 15, 426, 26)
+	SpriteFrame(-4, -8, 8, 15, 435, 26)
+	SpriteFrame(-4, -8, 8, 15, 444, 26)
+	SpriteFrame(-4, -8, 8, 15, 453, 26)
+	SpriteFrame(-4, -8, 8, 15, 462, 26)
+	SpriteFrame(-4, -8, 8, 15, 471, 26)
+	SpriteFrame(-4, -8, 8, 15, 480, 26)
+	SpriteFrame(-4, -8, 8, 15, 381, 42)
+	SpriteFrame(-4, -8, 8, 15, 390, 42)
+	SpriteFrame(-4, -8, 8, 15, 399, 42)
+	SpriteFrame(-4, -8, 8, 15, 408, 42)
+	SpriteFrame(-4, -8, 8, 15, 489, 26)
+	SpriteFrame(-4, -8, 8, 15, 498, 26)
+	SpriteFrame(-12, -8, 24, 15, 417, 42)
+
+	// Texto del mensaje (3 lineas) en MENU_2 (no se usa en una zona normal)
+	SetupMenu(MENU_2, 0, 1, 1)
+end event
+
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event

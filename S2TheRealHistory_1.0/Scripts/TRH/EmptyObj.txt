@@ -1,0 +1,8 @@
+// ============================================================
+// [TRH TAREA 2] Script VACIO para objetos desactivados.
+// Usado por el StageConfig de Zone28 (Warp Point): todos los
+// objetos de escena (agua, enemigos, jefes) apuntan aqui, asi
+// el Warp Point queda limpio y solo actua HPZ Setup (obj[0])
+// + los anillos/globales del propio Warp Point.
+// Contenido solo-comentario = se registra el tipo y NO hace nada.
+// ============================================================

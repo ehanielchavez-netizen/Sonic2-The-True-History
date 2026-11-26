@@ -1,0 +1,242 @@
+// ----------------------------------
+// RSDK Project:  Sonic 2 Westside Renovation
+// Script Description:    RWZ Setup Object 
+// Script Author: Twanvanb1
+// ----------------------------------
+
+// ========================
+// Aliases
+// ========================
+
+private alias object.value0 	:	object.PaletteTimer
+private alias object.value1 	:	object.TileTimer
+private alias object.value2 	:	object.TileFrame
+private alias object.value3 	:	object.DeformTimer
+private alias object.value4 	:
+private alias object.value5 	:
+private alias object.value6 	:
+private alias object.value7 	:
+private alias object.value8 	:
+private alias object.value9 	:
+private alias object.value10 	:
+
+// Tracks
+private alias 0 : TRACK_STAGE
+private alias 1 : TRACK_ACTFINISH
+private alias 2 : TRACK_INVINCIBLE
+private alias 3 : TRACK_CONTINUE
+private alias 4 : TRACK_BOSS
+private alias 5 : TRACK_GAMEOVER
+private alias 6 : TRACK_DROWNING
+private alias 7 : TRACK_SUPER
+
+// Reserved Object Slots Aliases
+private alias 10 : SLOT_ZONESETUP
+private alias 25 : SLOT_MUSICEVENT_CHANGE
+private alias 26 : SLOT_MUSICEVENT_BOSS
+
+// Music Events
+private alias 0 : MUSICEVENT_FADETOBOSS
+private alias 1 : MUSICEVENT_FADETOSTAGE
+private alias 2 : MUSICEVENT_TRANSITION
+
+private alias 0 : MUSICEVENT_FLAG_NOCHANGE
+private alias 1 : MUSICEVENT_FLAG_SPEEDUP
+private alias 2 : MUSICEVENT_FLAG_SLOWDOWN
+
+// Music Loops
+
+private alias 386667 : MUSIC_LOOP_RWZ
+private alias 309759 : MUSIC_LOOP_RWZ_F
+
+private alias 38679  : MUSIC_LOOP_INV
+private alias 30897  : MUSIC_LOOP_INV_F
+
+// Deformation Layer
+
+private alias 2	:	DEFORM_BG
+
+// ========================
+// Function Declarations
+// ========================
+
+reserve function RWZSetup_SpeedUpMusic
+reserve function RWZSetup_SlowDownMusic
+
+// ========================
+// Static Values
+// ========================
+
+// ========================
+// Tables
+// ========================
+
+private table RWZSetup_AniTileDelay
+	24, 8, 8, 8, 8, 8
+end table
+
+// ========================
+// Function Definitions
+// ========================
+
+private function RWZSetup_SpeedUpMusic
+	CheckEqual(object[SLOT_MUSICEVENT_CHANGE].type, TypeName[Music Event])
+	temp0 = checkResult
+	CheckEqual(object[SLOT_MUSICEVENT_CHANGE].propertyValue, MUSICEVENT_TRANSITION)
+	temp0 &= checkResult
+	CheckEqual(stage.musicFlag, MUSICEVENT_FLAG_NOCHANGE)
+	temp0 &= checkResult
+	if temp0 == 0
+		switch music.currentTrack
+		case TRACK_STAGE
+			SetMusicTrack("Invincibility_F.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV_F)
+			SwapMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ_F, 8000)
+			break
+
+		case TRACK_INVINCIBLE
+			SetMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ_F)
+			SwapMusicTrack("Invincibility_F.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV_F, 8000)
+			break
+
+		case TRACK_BOSS
+		case TRACK_DROWNING
+		case TRACK_SUPER
+			SetMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ_F)
+			SetMusicTrack("Invincibility_F.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV_F)
+			break
+
+		end switch
+	else
+		stage.musicFlag = MUSICEVENT_FLAG_SPEEDUP
+	end if
+end function
+
+private function RWZSetup_SlowDownMusic
+	CheckEqual(object[SLOT_MUSICEVENT_CHANGE].type, TypeName[Music Event])
+	temp0 = checkResult
+	CheckEqual(object[SLOT_MUSICEVENT_CHANGE].propertyValue, MUSICEVENT_TRANSITION)
+	temp0 &= checkResult
+	CheckEqual(stage.musicFlag, MUSICEVENT_FLAG_NOCHANGE)
+	temp0 &= checkResult
+	if temp0 == 0
+		switch music.currentTrack
+		case TRACK_STAGE
+			SetMusicTrack("Invincibility.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV)
+			SwapMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ, 12500)
+			break
+
+		case TRACK_INVINCIBLE
+			SetMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ)
+			SwapMusicTrack("Invincibility.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV, 12500)
+			break
+
+		case TRACK_BOSS
+		case TRACK_DROWNING
+		case TRACK_SUPER
+			SetMusicTrack("SkyChase.ogg", TRACK_STAGE, MUSIC_LOOP_RWZ)
+			SetMusicTrack("Invincibility.ogg", TRACK_INVINCIBLE, MUSIC_LOOP_INV)
+			break
+
+		end switch
+	else
+		stage.musicFlag = MUSICEVENT_FLAG_SLOWDOWN
+	end if
+end function
+
+// ========================
+// Events
+// ========================
+
+event ObjectUpdate
+	object.PaletteTimer++
+		if object.PaletteTimer == 6
+			object.PaletteTimer = 0
+			RotatePalette(0, 178, 181, false)
+		end if
+
+	// Piston Ani Tiles
+object.TileTimer++
+	GetTableValue(temp0, object.TileFrame, RWZSetup_AniTileDelay)
+	if object.TileTimer >= temp0
+		object.TileTimer = 0 
+		object.TileFrame++
+		object.TileFrame %= 6
+
+		temp2 = object.TileFrame
+		temp2 += 538
+		Copy16x16Tile(73, temp2)
+			
+		temp2 = 6
+		temp2 += object.TileFrame
+		temp2 += 538
+		Copy16x16Tile(77, temp2)
+
+		temp2 = 12
+		temp2 += object.TileFrame
+		temp2 += 538
+		Copy16x16Tile(78, temp2)
+
+		temp2 = 18
+		temp2 += object.TileFrame
+		temp2 += 538
+		Copy16x16Tile(79, temp2)
+	end if
+
+	Object.DeformTimer++
+		if Object.DeformTimer >= 2
+			Object.DeformTimer = 0
+			TileLayer[1].DeformationOffset++
+		end if
+end event
+
+event ObjectDraw
+
+end event
+
+event ObjectStartup
+	// ====================================================================
+	// TRH 4.3 - SPAWN DE LA ESMERALDA DE CAOS 4
+	//   Rock World A1  |  acto 30
+	// --------------------------------------------------------------------
+	// TABLA EDITABLE (pixeles sobre un anillo real del nivel):
+	//   ESMERALDA 4   X = 8076   Y = 1064   flag = saveRAM[2004]
+	// Si saveRAM[2004] vale 1 la esmeralda ya se recogio y no aparece.
+	// El ID de tipo lo da StageConfig (ultimo objeto del escenario).
+	// ====================================================================
+	if stage.listPos == 18
+		if saveRAM[2004] == 0
+			temp0 = 8076
+			temp0 <<= 16
+			temp1 = 1064
+			temp1 <<= 16
+			object[tempObjectPos].drawOrder = 4
+		end if
+	end if
+
+	SetMusicTrack("SkyChase.ogg", 0, MUSIC_LOOP_RWZ)
+	SpeedUpMusic = RWZSetup_SpeedUpMusic
+	SlowDownMusic = RWZSetup_SlowDownMusic
+
+	animalType1 = TypeName[Flicky]
+	animalType2 = TypeName[Ricky]
+	object[10].type = TypeName[RWZ Setup]
+	object[10].priority = PRIORITY_ACTIVE
+
+	SetLayerDeformation(DEFORM_BG, 24, 1, 0, 0, 0)
+
+end event
+
+// ========================
+// Editor Events
+// ========================
+
+event RSDKDraw
+  DrawSprite(0)
+end event
+
+event RSDKLoad
+  LoadSpriteSheet("Global/Display.gif")
+  SpriteFrame(-16, -16, 32, 32, 1, 143)
+
+  SetVariableAlias(ALIAS_VAR_PROPVAL, unused)
+end event

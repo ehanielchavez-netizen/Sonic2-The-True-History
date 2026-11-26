@@ -1,0 +1,13 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: TRH No-Op (stub) - objeto INERTE.
+//   Se usa en el StageConfig de Zone28 (Warp Point) para sustituir los
+//   scripts de HPZ (agua, orbs, puentes, jefes, enemigos, plataforma...)
+//   sin tocar la escena: los objetos siguen colocados en Act1.bin pero
+//   ya no dibujan, no tienen colision y no hacen nada.
+//   Asi la zona queda vacia: solo el anillo gigante de
+//   TRH/WarpZoneSetup.txt.
+// ----------------------------------
+
+event ObjectMain
+end event

@@ -1,0 +1,107 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: TRH TIME TRAVEL - MAQUINA DEL TIEMPO de Olympus
+//   (Zone08 Act1, entidad tipo 82 al FINAL DE LA ARENA, x=13700, y=732).
+//   MAQUINA REAL: hoja TRH/TimeMachine.gif con 3 frames de 96x96 -
+//   cuerpo metalico, ventana que pulsa, 2 engranajes DORADOS que GIRAN
+//   (fase distinta por frame), luces superiores corriendo y antenas
+//   parpadeando. Animacion: los 3 frames se ciclan en ObjectDraw.
+//   Al tocarla (a menos de 16 px del centro) viaja al Good Future de
+//   Emerald Hill: saveRAM[2000] = 5, saveRAM[2008] = 1, LoadStage(39).
+// ----------------------------------
+
+// Distancia en px del centro de la maquina que dispara el viaje
+// (pedido del diseno: "menos de 16 pixeles del centro")
+private alias 16 : TRH_TT_R
+
+// Static Values
+private value TRH_ttSpin = 0;
+private value TRH_ttShot = 0;
+// TRH FIX EMERGENCIA: la secuencia del Death Egg (subida + Super +
+//   vuelo) se ELIMINO del proyecto por crashear el juego - este
+//   archivo ya NO tiene logica de subida.
+
+event ObjectMain
+	// ---- viaje one-shot al tocar la maquina (dx y dy < 16 px) ----
+	temp4 = 0
+	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+		temp0 = object[currentPlayer].ixpos
+		temp0 -= object.ixpos
+		if temp0 < 0
+			temp0 = 0
+			temp0 -= object[currentPlayer].ixpos
+			temp0 += object.ixpos
+		end if
+		if temp0 < TRH_TT_R
+			temp1 = object[currentPlayer].iypos
+			temp1 -= object.iypos
+			if temp1 < 0
+				temp1 = 0
+				temp1 -= object[currentPlayer].iypos
+				temp1 += object.iypos
+			end if
+			if temp1 < TRH_TT_R
+				temp4 = 1
+			end if
+		end if
+	next
+	if temp4 == 1
+		if TRH_ttShot == 0
+			TRH_ttShot = 1
+			// TRH: Exit SS no existe en Zone28/Zone24, el SfxName rompia la
+			//   compilacion del script, sonido desactivado (el viaje sigue)
+			//PlaySfx(SfxName[Exit SS], 0)
+			// viaje al Futuro Bueno: epoca 5 + poder usado
+			// (la subida del Death Egg se ELIMINO - ver cabecera)
+			// TRH: Hidden Place -> siguiente era = FUTURE (Casino Night a1).
+			//   Antes iba a listPos 39 (Good Future de Emerald Hill).
+			saveRAM[2000] = 3
+			saveRAM[2008] = 1
+			WriteSaveRAM()
+			if saveRAM[2022] == 1
+				stage.listPos = saveRAM[2020]
+				starPostID = saveRAM[2021]
+				saveRAM[2022] = 0
+			else
+				stage.listPos = 20
+			end if
+			// starPostID = 0 ANTES de cargar (mismo patron que WarpZoneSetup)
+			starPostID = 0
+			LoadStage()
+		end if
+	end if
+	// animacion de la maquina: 6 estados (0..5) -> frame = estado >> 1
+	//   (cada frame de engranaje/seCuencia se ve 2 ticks)
+	TRH_ttSpin++
+	if TRH_ttSpin > 5
+		TRH_ttSpin = 0
+	end if
+end event
+
+event ObjectDraw
+	// ---- MAQUINA ANIMADA (nada estatico) ----
+	// frame 0/1/2 de la hoja: engranajes girando + ventana pulsante +
+	//   luces corriendo + antenas parpadeando. Coordenadas MUNDO con
+	//   DrawSpriteXY (aplica la camara sola).
+	temp0 = TRH_ttSpin
+	temp0 >>= 1
+	temp1 = object.xpos
+	temp2 = object.ypos
+	DrawSpriteXY(temp0, temp1, temp2)
+end event
+
+event ObjectStartup
+	// hoja de la MAQUINA DEL TIEMPO (288x96 = 3 frames de 96x96):
+	//   frame 0 = engranaje A en fase 0
+	//   frame 1 = engranaje A girado (ventana en pulso bajo, luz media)
+	//   frame 2 = engranaje A girado mas (luz derecha activa)
+	LoadSpriteSheet("TRH/TimeMachine.gif")
+	SpriteFrame(-48, -48, 96, 96, 0, 0)
+	SpriteFrame(-48, -48, 96, 96, 96, 0)
+	SpriteFrame(-48, -48, 96, 96, 192, 0)
+	// TRH: pista 0 = musica de zona (la ponia WarpZoneSetup, que ya no es
+	//   el dueno del StageConfig de Zone28/Zone24). Mismo patron original:
+	//   MysticCave2.ogg en la pista 0 y arranque inmediato.
+	SetMusicTrack("MysticCave2.ogg", 0, 1)
+	PlayMusic(0)
+end event

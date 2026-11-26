@@ -1,0 +1,19 @@
+# Local base-game / development files
+GameConfig.bin.mod-original-backup
+*.bak
+*.old
+*.orig
+*.tmp
+*.log
+*.7z
+*.zip
+*.rar
+
+# OS metadata
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Release staging
+dist/
+release/

@@ -1,0 +1,22 @@
+* text=auto
+
+*.bin binary
+*.gif binary
+*.bmp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ogg binary
+*.ogv binary
+*.wav binary
+*.dat binary
+*.rsdk binary
+
+*.txt text
+*.ini text
+*.md text
+*.html text
+*.css text
+*.js text
+*.svg text

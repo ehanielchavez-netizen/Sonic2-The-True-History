@@ -1,0 +1,1522 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: HPZ Setup Object
+// Script Author: Christan Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+//-------Aliases-------//
+private alias 40 : TYPE_HPZSETUP
+
+// TRH TAREA - MAQUINA DEL TIEMPO (Zone28 / Warp Point)
+//   Coordenadas de PRUEBA en pixeles. AJUSTAR AQUI (un solo lugar) para que la
+//   maquina quede al final del pasillo y el jugador pueda tocarla en juego.
+//   TRH_TM_R = radio de toque (px) alrededor de TRH_TM_X / TRH_TM_Y.
+private alias 6000 : TRH_TM_X
+private alias 1500 : TRH_TM_Y
+private alias 64 : TRH_TM_R
+// [TRH rewrite] PORTAL de Olympus: radio de toque del Anillo Gigante
+// = 32px (el sprite mide 96x96).
+// [TRH rewrite] objeto TimeTravel = PORTAL REAL al final de la arena
+//   Olympus (entidad tipo 82 en Zone08 Act1, x = 13700 px). ESTADO 5
+//   camina hasta aqui y el objeto detecta el toque (<16 px del centro).
+private alias 13700 : TRH_TT_X
+
+// Function declarations
+reserve function HPZSetup_Function97
+reserve function HPZSetup_Function98
+reserve function HPZSetup_Function99
+reserve function HPZSetup_Function100
+reserve function HPZSetup_Function101
+reserve function HPZSetup_Function102
+reserve function HPZSetup_Function103
+
+// Static Values
+public value HPZSetup_value33 = 0;
+public value HPZSetup_value34 = 0;
+public value HPZSetup_value35 = 0;
+public value HPZSetup_value36 = 0;
+public value HPZSetup_paloffset = 0;
+
+// PARTE 13 - CINEMATICA OLYMPUS (LINEAL 2026-10-20 - BORRON Y CUENTA NUEVA)
+//   SIN maquina de estados, SIN duenos de slot. El host t40 de la arena
+//   (x=12960) es el UNICO que ejecuta la cinematica (gate por POSICION
+//   object.ixpos > 12800). Fases encadenadas (TRH_phase):
+//     0 = reposo (espera del gatillo X > 12900)
+//     1 = pantalla negra + esmeralda aparece (AZUL, sin trucos de paleta)
+//     2 = TEMBLOR (screen.shakeY = 8, 120 frames). Sonic QUIETO, solo
+//         cambia la animacion de puntitas. La esmeralda es lo UNICO que
+//         se mueve (teleport entre 4 posiciones fijas + parpadeo).
+//     3 = transformacion REAL (PlayerObject_SuperTransform) + fin temblor
+//     4 = Sonic camina SOLO hasta el portal TimeTravel (x=13700) y viaja
+//         al Good Future de Emerald Hill (listPos 39)
+private value TRH_phase = 0;
+private value TRH_timer = 0;
+private value TRH_ringinit = 0;
+// indice de teleport de la esmeralda durante el TEMBLOR (fase 2)
+private value TRH_telIdx = 0;
+
+// TRH FIX TERREMOTO: posicion inicial congelada del temblor (fase 2).
+//   Se guarda al entrar en la fase y se RESTAURA CADA FRAME: Sonic no
+//   se mueve del sitio, solo cambia la animacion (pedido explicito:
+//   "no uses xpos +=, solo cambia la animacion").
+private value TRH_saveX = 0;
+private value TRH_saveY = 0;
+// TRH FIX PUNTITAS 6 (ronda 5): reclamo unico de la cinematica + cues
+//   de diagnostico. TRH_claims 0/1 = gatillo sin usar / reclamado;
+//   TRH_hostX = ixpos de la instancia que reclamo (las fases solo corren
+//   en ella), TRH_hostCue = latigazo shakeX inicial que prueba que el
+//   ObjectMain de HPZSetup esta vivo.
+private value TRH_claims = 0;
+private value TRH_hostX = -1;
+private value TRH_hostCue = 0;
+
+// TRH VIDEO OLYMPUS (GIF + OGG sincronizado)
+//   Fase 90 = carga la 1a hoja, define frames y arranca el audio.
+//   Fase 91 = reproduce 70 frames a 6 ticks/frame (10 fps exactos a 60 fps).
+//   Las 3 hojas (24+24+22 frames de 256x144) se cargan/quitan de una en una
+//   para no pasar el limite de GFXDATA (4 MB) ni SURFACE_COUNT (24).
+private value TRH_vidSheet = 0;
+private value TRH_vidFrame = 0;
+private value TRH_vidTimer = 0;
+private value TRH_vidBase = 0;
+
+// Tables
+public table HPZSetup_table38
+	768, 18, 770, 9, 772, 18, 770, 9
+end table
+
+public table HPZSetup_table39
+	774, 18, 776, 9, 778, 18, 776, 9
+end table
+
+public table HPZSetup_table40
+	780, 18, 783, 9, 786, 18, 783, 9
+end table
+
+public table HPZSetup_table41
+	789, 18, 792, 9, 795, 18, 792, 9
+end table
+
+public table HPZSetup_table42
+	0, 0, 1, 2, 3, 3, 2, 1, 2, 3, 3, 2, 1, 0
+end table
+
+function HPZSetup_Function97
+	object.value9 = temp1
+	object.value9 >>= 16
+	object.value10 = temp1
+	object.value10 >>= 8
+	object.value10 &= 255
+	object.value11 = temp1
+	object.value11 &= 255
+	object.value12 = temp2
+	object.value12 >>= 16
+	object.value13 = temp2
+	object.value13 >>= 8
+	object.value13 &= 255
+	object.value14 = temp2
+	object.value14 &= 255
+	if object.value12 == 0
+		object.value12 = 1
+	end if
+	if object.value13 == 0
+		object.value13 = 1
+	end if
+	if object.value14 == 0
+		object.value14 = 1
+	end if
+	object.value9 <<= 8
+	object.value10 <<= 8
+	object.value11 <<= 8
+	object.value9 /= object.value12
+	object.value10 /= object.value13
+	object.value11 /= object.value14
+	if object.value9 == 0
+		object.value9 = 256
+	end if
+	if object.value10 == 0
+		object.value10 = 256
+	end if
+	if object.value11 == 0
+		object.value11 = 256
+	end if
+end function
+
+
+function HPZSetup_Function98
+	temp0 = 0
+	GetPaletteEntry(1, 2, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 3, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 4, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 5, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+	temp0++
+	CopyPalette(1, 0, 4, 2, 4)
+	while temp0 < 64
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuperPal)
+		SetPaletteEntry(3, 0, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuperPal)
+		SetPaletteEntry(3, 1, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuperPal)
+		SetPaletteEntry(3, 2, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuperPal)
+		SetPaletteEntry(3, 3, temp1)
+		temp0 -= 3
+		SetPaletteFade(5, 3, 4, 48, 0, 4)
+		GetPaletteEntry(5, 0, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+		temp0++
+		GetPaletteEntry(5, 1, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+		temp0++
+		GetPaletteEntry(5, 2, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+		temp0++
+		GetPaletteEntry(5, 3, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuperAltPal)
+		temp0++
+	loop
+	
+	temp0 = 0
+	GetPaletteEntry(1, 2, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+	temp0++
+	GetPaletteEntry(1, 3, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+	temp0++
+	GetPaletteEntry(1, 4, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+	temp0++
+	GetPaletteEntry(1, 5, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+	temp0++
+	CopyPalette(1, 0, 4, 2, 4)
+	while temp0 < 120
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuper2Pal)
+		SetPaletteEntry(3, 0, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuper2Pal)
+		SetPaletteEntry(3, 1, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuper2Pal)
+		SetPaletteEntry(3, 2, temp1)
+		temp0++
+		GetTableValue(temp1, temp0, PlayerObject_SonicSuper2Pal)
+		SetPaletteEntry(3, 3, temp1)
+		temp0 -= 3
+		SetPaletteFade(5, 3, 4, 48, 0, 4)
+		GetPaletteEntry(5, 0, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+		temp0++
+		GetPaletteEntry(5, 1, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+		temp0++
+		GetPaletteEntry(5, 2, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+		temp0++
+		GetPaletteEntry(5, 3, temp1)
+		SetTableValue(temp1, temp0, PlayerObject_SonicSuper2AltPal)
+		temp0++
+	loop
+end function
+
+
+function HPZSetup_Function99
+	temp0 = 0
+	GetPaletteEntry(1, 13, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 17, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 18, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 16, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+	temp0++
+	while temp0 < 24
+		GetPaletteEntry(0, 13, temp1)
+		GetPaletteEntry(1, 13, temp2)
+		CallFunction(HPZSetup_Function97)
+		GetTableValue(temp1, temp0, PlayerObject_TailsSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 248
+		temp1 /= object.value9
+		temp2 *= 248
+		temp2 /= object.value10
+		temp3 *= 248
+		temp3 /= object.value11
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 17, temp1)
+		GetPaletteEntry(1, 17, temp2)
+		CallFunction(HPZSetup_Function97)
+		GetTableValue(temp1, temp0, PlayerObject_TailsSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 256
+		temp1 /= object.value9
+		temp2 *= 256
+		temp2 /= object.value10
+		temp3 *= 256
+		temp3 /= object.value11
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 18, temp1)
+		GetPaletteEntry(1, 18, temp2)
+		CallFunction(HPZSetup_Function97)
+		GetTableValue(temp1, temp0, PlayerObject_TailsSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 256
+		temp1 /= object.value9
+		temp2 *= 256
+		temp2 /= object.value10
+		temp3 *= 256
+		temp3 /= object.value11
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+		temp0++
+		GetPaletteEntry(0, 16, temp1)
+		GetPaletteEntry(1, 16, temp2)
+		CallFunction(HPZSetup_Function97)
+		GetTableValue(temp1, temp0, PlayerObject_TailsSuperPal)
+		temp2 = temp1
+		temp2 >>= 8
+		temp2 &= 255
+		temp3 = temp1
+		temp3 &= 255
+		temp1 >>= 16
+		temp1 *= 256
+		temp1 /= object.value9
+		temp2 *= 256
+		temp2 /= object.value10
+		temp3 *= 256
+		temp3 /= object.value11
+		temp1 &= 240
+		temp2 &= 240
+		temp3 &= 240
+		if temp1 > 224
+			temp1 = 224
+		end if
+		if temp2 > 224
+			temp2 = 224
+		end if
+		if temp3 > 224
+			temp3 = 224
+		end if
+		temp1 <<= 16
+		temp2 <<= 8
+		temp1 += temp2
+		temp1 += temp3
+		SetTableValue(temp1, temp0, PlayerObject_TailsSuperAltPal)
+		temp0++
+	loop
+end function
+
+
+function HPZSetup_Function100
+	temp0 = 0
+	GetPaletteEntry(1, 26, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_KnuxSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 27, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_KnuxSuperAltPal)
+	temp0++
+	GetPaletteEntry(1, 28, temp1)
+	SetTableValue(temp1, temp0, PlayerObject_KnuxSuperAltPal)
+	temp0++
+end function
+
+
+function HPZSetup_Function101
+	CheckEqual(object[25].type, TypeName[Music Event])
+	temp0 = checkResult
+	CheckEqual(object[25].propertyValue, 2)
+	temp0 &= checkResult
+	CheckEqual(stage.musicFlag, 0)
+	temp0 &= checkResult
+	if temp0 == 0
+		switch music.currentTrack
+		case 0
+			SetMusicTrack("Invincibility_F.ogg", 2, 0x78B1)
+			SwapMusicTrack("HiddenPalace.ogg", 0, 0x3BA8, 0x1F40)
+			break
+		case 2
+			SetMusicTrack("HiddenPalace.ogg", 0, 0x3BA8)
+			SwapMusicTrack("Invincibility_F.ogg", 2, 0x78B1, 0x1F40)
+			break
+		case 4
+		case 6
+		case 7
+			SetMusicTrack("HiddenPalace.ogg", 0, 0x3BA8)
+			SetMusicTrack("Invincibility_F.ogg", 2, 0x78B1)
+			break
+		end switch
+	else
+		stage.musicFlag = 1
+	end if
+end function
+
+
+function HPZSetup_Function102
+	CheckEqual(object[25].type, TypeName[Music Event])
+	temp0 = checkResult
+	CheckEqual(object[25].propertyValue, 2)
+	temp0 &= checkResult
+	CheckEqual(stage.musicFlag, 0)
+	temp0 &= checkResult
+	if temp0 == 0
+		switch music.currentTrack
+		case 0
+			SetMusicTrack("Invincibility.ogg", 2, 0x9717)
+			SwapMusicTrack("HiddenPalace.ogg", 0, 0x48F0, 0x30D4)
+			break
+		case 2
+			SetMusicTrack("HiddenPalace.ogg", 0, 0x48F0)
+			SwapMusicTrack("Invincibility.ogg", 2, 0x9717, 0x30D4)
+			break
+		case 4
+		case 6
+		case 7
+			SetMusicTrack("HiddenPalace.ogg", 0, 0x48F0)
+			SetMusicTrack("Invincibility.ogg", 2, 0x9717)
+			break
+		end switch
+	else
+		stage.musicFlag = 2
+	end if
+end function
+
+
+event ObjectMain
+	// TRH: el setup se AUTO-PERSISTE (prioridad ACTIVE). Sin esto la
+	//   entidad t40 se desactiva al salir de pantalla y la cinematica
+	//   se congelaria a mitad (el portal TimeTravel esta en x=13700).
+	object.priority = PRIORITY_ACTIVE
+	// TRH FIX PUNTITAS 6 - CUE A (diagnostico ronda 5): latigazo
+	//   horizontal de ~10 frames AL CARGAR la etapa. Demuestra que el
+	//   ObjectMain de HPZSetup esta corriendo:
+	//     sin latigazo  -> el script NO se ejecuta (entidad muerta).
+	//     latigazo pero sin pantalla negra al cruzar x>12900 ->
+	//     el jugador no llego a la arena (gatillo fisico).
+	//   El contador es compartido: 3 instancias x 3 ticks/frame ~= 10
+	//   frames visibles y luego se apaga una sola vez.
+	if TRH_hostCue < 30
+		TRH_hostCue++
+		screen.shakeX = 8
+	else
+		if TRH_hostCue == 30
+			TRH_hostCue = 31
+			screen.shakeX = 0
+		end if
+	end if
+	switch stage.actNum
+		case 1 //Taxman
+			// TAREA 5 FIX (AGUA INVERTIDA): los valores estaban AL REVES
+			// que en el HPZSetup base (base L409-413): x > umbral =>
+			// 0x6140000 (agua BAJA) y x <= umbral => 0x74C0000 (agua ALTA).
+			if object[0].xpos > 0xE800000
+				stage.newWaterLevel = 0x6140000
+			else
+				stage.newWaterLevel = 0x74C0000
+			end if
+			break
+		case 2 //Proto
+			if object.value21 == 0
+				if object[0].xpos < 0x2260000
+					object[0].controlMode = -1
+					object[0].right = 1
+				else
+					object.value21 = 1
+					object[0].controlMode = 0
+				end if
+			end if
+			break
+		case 3 //Test Arena
+			break
+	end switch
+	object.value0++
+	if object.value0 == 2
+		tileLayer[0].deformationOffsetW++
+	end if
+	if object.value0 == 4
+		tileLayer[0].deformationOffsetW++
+		tileLayer[1].deformationOffsetW++
+		object.value0 = 0
+	end if
+	object.value1++
+	if object.value1 == 5
+		object.value1 = 0
+		RotatePalette(0, 185, 188, 1)
+	end if
+	if object.value2 < 2
+		GetTableValue(temp0, object.value3, HPZSetup_table38)
+		Copy16x16Tile(738, temp0)
+		temp0++
+		Copy16x16Tile(739, temp0)
+		GetTableValue(temp0, object.value3, HPZSetup_table39)
+		Copy16x16Tile(744, temp0)
+		temp0++
+		Copy16x16Tile(745, temp0)
+		GetTableValue(temp0, object.value3, HPZSetup_table40)
+		Copy16x16Tile(750, temp0)
+		temp0++
+		Copy16x16Tile(751, temp0)
+		temp0++
+		Copy16x16Tile(752, temp0)
+		GetTableValue(temp0, object.value3, HPZSetup_table41)
+		Copy16x16Tile(759, temp0)
+		temp0++
+		Copy16x16Tile(760, temp0)
+		temp0++
+		Copy16x16Tile(761, temp0)
+		object.value3++
+		GetTableValue(object.value2, object.value3, HPZSetup_table38)
+		object.value3++
+		object.value3 &= 7
+	else
+		object.value2--
+	end if
+	if object.value4 < 2
+		GetTableValue(temp0, object.value5, HPZSetup_table38)
+		Copy16x16Tile(740, temp0)
+		temp0++
+		Copy16x16Tile(741, temp0)
+		GetTableValue(temp0, object.value5, HPZSetup_table39)
+		Copy16x16Tile(746, temp0)
+		temp0++
+		Copy16x16Tile(747, temp0)
+		GetTableValue(temp0, object.value5, HPZSetup_table40)
+		Copy16x16Tile(753, temp0)
+		temp0++
+		Copy16x16Tile(754, temp0)
+		temp0++
+		Copy16x16Tile(755, temp0)
+		GetTableValue(temp0, object.value5, HPZSetup_table41)
+		Copy16x16Tile(762, temp0)
+		temp0++
+		Copy16x16Tile(763, temp0)
+		temp0++
+		Copy16x16Tile(764, temp0)
+		object.value5++
+		GetTableValue(object.value4, object.value5, HPZSetup_table38)
+		object.value5++
+		object.value5 &= 7
+	else
+		object.value4--
+	end if
+	if object.value6 < 2
+		GetTableValue(temp0, object.value7, HPZSetup_table38)
+		Copy16x16Tile(742, temp0)
+		temp0++
+		Copy16x16Tile(743, temp0)
+		GetTableValue(temp0, object.value7, HPZSetup_table39)
+		Copy16x16Tile(748, temp0)
+		temp0++
+		Copy16x16Tile(749, temp0)
+		GetTableValue(temp0, object.value7, HPZSetup_table40)
+		Copy16x16Tile(756, temp0)
+		temp0++
+		Copy16x16Tile(757, temp0)
+		temp0++
+		Copy16x16Tile(758, temp0)
+		GetTableValue(temp0, object.value7, HPZSetup_table41)
+		Copy16x16Tile(765, temp0)
+		temp0++
+		Copy16x16Tile(766, temp0)
+		temp0++
+		Copy16x16Tile(767, temp0)
+		object.value7++
+		GetTableValue(object.value6, object.value7, HPZSetup_table38)
+		object.value7++
+		object.value7 &= 7
+	else
+		object.value6--
+	end if
+	if HPZSetup_value33 > 0
+		HPZSetup_value33--
+	end if
+	temp0 = object.value8
+	temp0 /= 6
+	GetTableValue(HPZSetup_value35, temp0, HPZSetup_table42)
+	object.value8++
+	object.value8 %= 84
+	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+		temp1 = object[currentPlayer].xpos
+		temp1 >>= 16
+		temp2 = object[currentPlayer].ypos
+		temp2 >>= 16
+		temp2 += object[currentPlayer].collisionBottom
+		temp2--
+		if object[currentPlayer].gravity == GRAVITY_GROUND
+			Get16x16TileInfo(temp0, temp1, temp2, TILEINFO_ANGLEB)
+			if temp0 == 1
+				object[currentPlayer].state = PlayerObject_Waterslide
+				object[currentPlayer].direction = FLIP_NONE
+			end if
+		end if
+	next
+	if object[0].state == PlayerObject_Waterslide
+		if object.value16 == 0
+			if object.value17 == 0
+				PlaySfx(SfxName[Waterfall], 0)
+				StopSfx(SfxName[Waterfall Loop])
+				object.value17 = 1
+			else
+				StopSfx(SfxName[Waterfall])
+				PlaySfx(SfxName[Waterfall Loop], 0)
+			end if
+		end if
+		object.value16++
+		object.value16 &= 63
+	else
+		if object.value16 != 0
+			object.value16++
+			object.value16 &= 63
+		else
+			object.value16 = 0
+			object.value17 = 0
+		end if
+	end if
+	if HPZSetup_value36 == 0
+		if stage.debugMode == 0
+			if options.stageSelectFlag == 0
+				if object[30].type == TypeName[Act Finish]
+					HPZSetup_value36 = 1
+					//CallNativeFunction2(SetAchievement, 7, 100)
+					//achievement.trigger = 8 //A Secret Revealed
+				end if
+			end if
+		end if
+	end if
+	
+	temp0 = screen.xoffset
+	temp0 >>= 4
+	temp0 %= 7
+	while HPZSetup_paloffset != temp0
+		RotatePalette(0, 208, 221, 1)
+		RotatePalette(0, 208, 221, 1)
+		HPZSetup_paloffset++
+		HPZSetup_paloffset %= 7
+	loop
+	// ====================================================================
+	// TRH TAREA - TRIGGER DE LA MAQUINA DEL TIEMPO (Zone28 / listPos 46)
+	// --------------------------------------------------------------------
+	// Cuando el jugador toca la maquina (dentro de TRH_TM_R de TRH_TM_X/Y):
+	//   1) PlaySfx(Exit SS)
+	//   2) Segun la epoca actual TRH_era = saveRAM[2000] salta a la SIGUIENTE
+	//      epoca (destino listPos + nueva epoca), como TRH_WarpPoint pero
+	//      guiado por TRH_era y no por warpTable[46].
+	//   3) saveRAM[2000] = nueva epoca, WriteSaveRAM(), LoadStage().
+	// La guarda stage.listPos == 46 hace que solo corra en Zone28:
+	//   Olympus (Zone08, listPos 20) queda totalmente intacto.
+	//   Destinos (listPos): era0->0 EHZ | 1->8 | 2->34 | 3->20 Olympus |
+	//   4->39 FB / 36 FM (bifurcacion por esmeraldas) | 5->44 Epi |
+	//   6->47 NOW 3 (era 7, TAREA 2A) | 7->44 Epi | 8->0 (ciclo).
+	//   AJUSTAR si la cadena del mod debe ser otra.
+	// ====================================================================
+	if stage.listPos == 46
+		// TRH TAREA 6 - ANILLO GIGANTE (16 Rings en circulo) en ObjectMain.
+		//   Antes estaba en ObjectStartup y el CreateTempObject alli corrompia
+		//   la entidad[0] (pantalla negra en Zone28).  Value COMPARTIDO
+		//   TRH_ringinit (aunque haya 2 instancias de HPZSetup).
+		// TRH FIX2: ademas del spawn inicial, el circulo se RE-CREA cada
+		//   600 frames (10 s) con el MISMO patron de creacion de
+		//   Global/Ring.txt (CreateTempObject(TypeName[Ring], 0, ...) +
+		//   priority ACTIVE + drawOrder 4): los anillos coleccionados
+		//   RESPALWN y el circulo se mantiene completo.
+		TRH_ringinit++
+		if TRH_ringinit > 600
+			TRH_ringinit = 1
+		end if
+		if TRH_ringinit == 1
+			temp2 = 0
+			while temp2 < 16
+				switch temp2
+					case 0
+						temp0 = TRH_TM_X
+						temp0 += 44
+						temp1 = TRH_TM_Y
+						break
+					case 1
+						temp0 = TRH_TM_X
+						temp0 += 41
+						temp1 = TRH_TM_Y
+						temp1 += 17
+						break
+					case 2
+						temp0 = TRH_TM_X
+						temp0 += 31
+						temp1 = TRH_TM_Y
+						temp1 += 31
+						break
+					case 3
+						temp0 = TRH_TM_X
+						temp0 += 17
+						temp1 = TRH_TM_Y
+						temp1 += 41
+						break
+					case 4
+						temp0 = TRH_TM_X
+						temp1 = TRH_TM_Y
+						temp1 += 44
+						break
+					case 5
+						temp0 = TRH_TM_X
+						temp0 -= 17
+						temp1 = TRH_TM_Y
+						temp1 += 41
+						break
+					case 6
+						temp0 = TRH_TM_X
+						temp0 -= 31
+						temp1 = TRH_TM_Y
+						temp1 += 31
+						break
+					case 7
+						temp0 = TRH_TM_X
+						temp0 -= 41
+						temp1 = TRH_TM_Y
+						temp1 += 17
+						break
+					case 8
+						temp0 = TRH_TM_X
+						temp0 -= 44
+						temp1 = TRH_TM_Y
+						break
+					case 9
+						temp0 = TRH_TM_X
+						temp0 -= 41
+						temp1 = TRH_TM_Y
+						temp1 -= 17
+						break
+					case 10
+						temp0 = TRH_TM_X
+						temp0 -= 31
+						temp1 = TRH_TM_Y
+						temp1 -= 31
+						break
+					case 11
+						temp0 = TRH_TM_X
+						temp0 -= 17
+						temp1 = TRH_TM_Y
+						temp1 -= 41
+						break
+					case 12
+						temp0 = TRH_TM_X
+						temp1 = TRH_TM_Y
+						temp1 -= 44
+						break
+					case 13
+						temp0 = TRH_TM_X
+						temp0 += 17
+						temp1 = TRH_TM_Y
+						temp1 -= 41
+						break
+					case 14
+						temp0 = TRH_TM_X
+						temp0 += 31
+						temp1 = TRH_TM_Y
+						temp1 -= 31
+						break
+					case 15
+						temp0 = TRH_TM_X
+						temp0 += 41
+						temp1 = TRH_TM_Y
+						temp1 -= 17
+						break
+				end switch
+				temp0 <<= 16
+				temp1 <<= 16
+				CreateTempObject(TypeName[Ring], 0, temp0, temp1)
+				object[tempObjectPos].priority = PRIORITY_ACTIVE
+				object[tempObjectPos].drawOrder = 4
+				temp2++
+			loop
+		end if
+		// GRACIA: no deja disparar durante los primeros 90 frames (~1.5 s)
+		// desde que Zone28 carga. Sin esto, si Sonic spawnea SOBRE la maquina,
+		// LoadStage() se ejecutaba en el frame 1 y la carga se colgaba
+		// (congelamiento). object.value22 se resetea a 0 en cada carga.
+		if object.value22 < 90
+			object.value22++
+		end if
+		object.value20 = 0
+		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+			temp0 = object[currentPlayer].ixpos
+			temp0 -= TRH_TM_X
+			if temp0 < 0
+				temp0 = 0
+				temp0 -= object[currentPlayer].ixpos
+				temp0 += TRH_TM_X
+			end if
+			if temp0 <= TRH_TM_R
+				temp1 = object[currentPlayer].iypos
+				temp1 -= TRH_TM_Y
+				if temp1 < 0
+					temp1 = 0
+					temp1 -= object[currentPlayer].iypos
+					temp1 += TRH_TM_Y
+				end if
+				if temp1 <= TRH_TM_R
+					object.value20 = 1
+				end if
+			end if
+		next
+		// Dispara SOLO si se cumplen las 3 condiciones:
+		//   (a) tocando la maquina (value20==1),
+		//   (b) gracia cumplida (value22 >= 90),
+		//   (c) solo UNA vez por visita (value23 one-shot).
+		if object.value20 == 1
+			if object.value22 >= 90
+				if object.value23 == 0
+					object.value23 = 1
+					PlaySfx(SfxName[Exit SS], 0)
+					// temp2 = destino listPos, temp3 = nueva epoca (TRH_era)
+					temp2 = 0
+					temp3 = 1
+					switch saveRAM[2000]
+						case 0
+							temp2 = 0
+							temp3 = 1
+							break
+						case 1
+							temp2 = 8
+							temp3 = 2
+							break
+						case 2
+							temp2 = 34
+							temp3 = 3
+							break
+						case 3
+							// TAREA 4: mismo gate de 6 esmeraldas que en
+							// TRH_WarpPoint (Mystic Cave a2). Sin ellas la
+							// maquina salta al Futuro Malo (36, era 6) en vez
+							// de forzar Olympus.
+							if specialStage.emeralds >= 63
+								temp2 = 20
+								temp3 = 4
+							else
+								temp2 = 36
+								temp3 = 6
+							end if
+							break
+						case 4
+							// Olympus: bifurcacion por esmeraldas (igual que TRH_WarpPoint)
+							if specialStage.emeralds >= 127
+								temp2 = 39
+								temp3 = 5
+							else
+								temp2 = 36
+								temp3 = 6
+							end if
+							break
+						case 5
+							temp2 = 44
+							temp3 = 8
+							break
+						case 6
+							// TAREA 2A: era 6 (Futuro Malo) -> NOW 3 (era 7). Antes
+							// saltaba al Epilogo (44/8) y se perdia Now 3 + Bad Ending.
+							temp2 = 47
+							temp3 = 7
+							break
+						case 7
+							temp2 = 44
+							temp3 = 8
+							break
+						case 8
+							temp2 = 0
+							temp3 = 1
+							break
+						default
+							temp2 = 0
+							temp3 = 1
+							break
+					end switch
+					saveRAM[2000] = temp3
+					WriteSaveRAM()
+					stage.listPos = temp2
+					// TRH FIX4: starPostID = 0 ANTES de cargar (patron de
+					//   ActFinish.txt), si no reapareces en un star post ajeno.
+					starPostID = 0
+					LoadStage()
+				end if
+			end if
+		end if
+	end if
+	// ====================================================================
+	// TRH - BLOQUE OLYMPUS: JEFE bloqueado (HPZSetup solo existe en Zone08)
+	// --------------------------------------------------------------------
+	// El "B08 Eggman" de Hidden Palace (y sus Horn/Valve/Mine) se elimina
+	// en cuanto aparece: el flujo Olympus no termina en jefe sino en la
+	// cinematica de la PARTE 13 (esmeralda -> transformacion -> portal).
+	// El PORTAL (objeto TimeTravel en x=13700) y su viaje al Futuro
+	// Bueno los gestiona la cinematica LINEAL (fase 4, PARTE 13).
+	// ====================================================================
+		foreach (TypeName[B08 Eggman], arrayPos0, ALL_ENTITIES)
+			object[arrayPos0].type = 0
+		next
+		foreach (TypeName[Eggman Horn], arrayPos0, ALL_ENTITIES)
+			object[arrayPos0].type = 0
+		next
+		foreach (TypeName[Eggman Valve], arrayPos0, ALL_ENTITIES)
+			object[arrayPos0].type = 0
+		next
+		foreach (TypeName[Eggman Mine], arrayPos0, ALL_ENTITIES)
+			object[arrayPos0].type = 0
+		next
+	// ====================================================================
+	// PARTE 13 - CINEMATICA OLYMPUS (LINEAL 2026-10-20)
+	// --------------------------------------------------------------------
+	// El gate ANTERIOR (object.ixpos > 12800) exigia que existiera la
+	//   entidad host t40@(12960,732): si el acto se recompone o esa
+	//   instancia no despierta, la cinematica NO ARRANCABA NUNCA
+	//   (ronda 5: "el terremoto NUNCA existio, Sonic camina normal").
+	// TRH FIX PUNTITAS 6: cualquier instancia RECLAMA el gatillo una
+	//   sola vez en cuanto el jugador cruza X>12900 (TRH_claims) y solo
+	//   la instancia reclamante (comparando TRH_hostX con su ixpos)
+	//   ejecuta las fases - asi no hay carrera entre las 3 instancias
+	//   (forged x=28, spawn x=316, host x=12960) y el disparo NO
+	//   depende de la posicion de la entidad.
+	// ====================================================================
+	if TRH_claims == 0
+		temp0 = object[0].ixpos
+		if temp0 > 12900
+			TRH_claims = 1
+			TRH_hostX = object.ixpos
+		end if
+	end if
+	if object.ixpos == TRH_hostX
+		// FASE 0 - GATILLO: al cruzar X > 12900 se congela a Sonic,
+		//   pantalla negra y aparece la esmeralda (AZUL, paleta del
+		//   escenario, SIN tocar los indices 129-141 del HUD).
+		if TRH_phase == 0
+			temp0 = object[0].ixpos
+			if temp0 > 12900
+				object[0].controlMode = -1
+				object[0].jumpPress = 0
+				object[0].jumpHold = 0
+				object[0].up = 0
+				object[0].down = 0
+				object[0].left = 0
+				object[0].right = 0
+				object[0].speed = 0
+				object[0].state = PlayerObject_HandleGround
+				object[0].direction = FLIP_NONE
+				object[0].animation = ANI_STOPPED
+				stage.pauseEnabled = 0
+				SetScreenFade(0, 0, 0, 255)
+				// TRH VIDEO OLYMPUS: en vez de saltar directo a la esmeralda,
+				//   arranca la reproduccion del video (fase 90). La esmeralda
+				//   aparecera cuando el video termine.
+				TRH_vidSheet = 0
+				TRH_vidFrame = 0
+				TRH_vidTimer = 0
+				TRH_vidBase = 0
+				TRH_phase = 90
+			end if
+		end if
+		// CANDADO DE CONTROL: mientras haya cinematica (fase > 0) el
+		//   jugador NUNCA recibe el mando.
+		if TRH_phase > 0
+			object[0].controlMode = -1
+			object[0].jumpPress = 0
+			object[0].jumpHold = 0
+			object[0].up = 0
+			object[0].down = 0
+			object[0].left = 0
+			object[0].right = 0
+			object[0].speed = 0
+		end if
+		// ================================================================
+		// TRH VIDEO OLYMPUS - FASE 90: carga la 1a hoja y arranca el audio
+		// ================================================================
+		// ================================================================
+		// TRH VIDEO OLYMPUS - FASE 90: carga la hoja unica y arranca audio
+		// ================================================================
+		if TRH_phase == 90
+			object.drawOrder = 6
+			SetScreenFade(0, 0, 0, 0)
+			LoadPalette("TRH_OlympusPal.act", 0, 0, 0, 256)
+			RemoveSpriteSheet("Data/Sprites/HPZ/Objects.gif")
+			RemoveSpriteSheet("Data/Sprites/HPZ/Objects2.gif")
+			RemoveSpriteSheet("Data/Sprites/HPZ/Objects3.gif")
+			LoadSpriteSheet("TRH/Olympus.bmp")
+			TRH_vidBase = 0
+			SetMusicTrack("TRH_Olympus.ogg", 0, 0)
+			PlayMusic(0)
+			TRH_vidTimer = 0
+			TRH_phase = 91
+		end if
+
+		// ================================================================
+		// TRH VIDEO OLYMPUS - FASE 91: avanza frames (6 ticks = 10 fps)
+		// ================================================================
+		if TRH_phase == 91
+			TRH_vidTimer++
+			if TRH_vidTimer >= 6
+				TRH_vidTimer = 0
+				TRH_vidFrame++
+				if TRH_vidFrame >= 70
+					StopMusic()
+					object.drawOrder = 0
+					// Solo el video: al terminar carga FUTURE (Casino Night)
+					saveRAM[2000] = 3
+					saveRAM[2008] = 1
+					WriteSaveRAM()
+					starPostID = 0
+					if saveRAM[2022] == 1
+						stage.listPos = saveRAM[2020]
+						starPostID = saveRAM[2021]
+						saveRAM[2022] = 0
+					else
+						stage.listPos = 20
+					end if
+					LoadStage()
+				end if
+			end if
+		end if
+
+		// FASE 1 - la negra se sostiene 60 frames (1 s)
+		if TRH_phase == 1
+			SetScreenFade(0, 0, 0, 255)
+			TRH_timer++
+			if TRH_timer >= 60
+				TRH_phase = 2
+				TRH_timer = 0
+			end if
+		end if
+		// FASE 2 - TEMBLOR: se quita el negro y screen.shakeY = 8
+		//   durante 120 frames. Sonic COMPLETAMENTE QUIETO (X e Y
+		//   fijas): solo cambia la animacion de puntitas. La ESMERALDA
+		//   es lo unico que se mueve (teleport + parpadeo).
+		if TRH_phase == 2
+			// TRH FIX TERREMOTO (capturas): guardar la posicion al entrar
+			//   en la fase y RESTAURARLA CADA FRAME - Sonic NO se mueve
+			//   del sitio (sin xpos += solo cambia la animacion).
+			if TRH_timer == 0
+				TRH_saveX = object[0].xpos
+				TRH_saveY = object[0].ypos
+			end if
+			object[0].xpos = TRH_saveX
+			object[0].ypos = TRH_saveY
+			SetScreenFade(0, 0, 0, 0)
+			screen.shakeY = 8
+			// TRH FIX PUNTITAS: forzar ANI_WALKING cada frame durante el terremoto
+			object[0].animation = ANI_WALKING
+			object[0].prevAnimation = ANI_WALKING
+			object[0].animationSpeed = 60
+			object[0].animationTimer = 0
+			object[0].frame = 0
+			// teleport de la ESMERALDA entre 4 posiciones fijas
+			temp3 = TRH_timer
+			temp3 >>= 4
+			temp3 <<= 4
+			if temp3 == TRH_timer
+				TRH_telIdx++
+				if TRH_telIdx > 3
+					TRH_telIdx = 0
+				end if
+				temp0 = object[0].xpos
+				temp2 = object[0].ypos
+				if TRH_telIdx == 0
+					temp0 += 0x600000
+					temp2 -= 0x300000
+				end if
+				if TRH_telIdx == 1
+					temp0 -= 0x400000
+					temp2 -= 0x600000
+				end if
+				if TRH_telIdx == 2
+					temp0 += 0xA00000
+					temp2 -= 0x400000
+				end if
+				if TRH_telIdx == 3
+					temp0 -= 0x800000
+					temp2 -= 0x200000
+				end if
+				foreach (TypeName[Chaos Emerald], arrayPos0, ALL_ENTITIES)
+					object[arrayPos0].xpos = temp0
+					object[arrayPos0].ypos = temp2
+				next
+			end if
+			// parpadeo (invisible/visible) de la esmeralda
+			temp3 = TRH_timer
+			temp3 >>= 1
+			temp3 <<= 1
+			if temp3 == TRH_timer
+				foreach (TypeName[Chaos Emerald], arrayPos0, ALL_ENTITIES)
+					object[arrayPos0].alpha = 0
+				next
+			else
+				foreach (TypeName[Chaos Emerald], arrayPos0, ALL_ENTITIES)
+					object[arrayPos0].alpha = 256
+				next
+			end if
+			TRH_timer++
+			if TRH_timer >= 120
+				foreach (TypeName[Chaos Emerald], arrayPos0, ALL_ENTITIES)
+					object[arrayPos0].alpha = 256
+				next
+				screen.shakeY = 0
+				// TRH FIX TERREMOTO: devolver la velocidad normal de
+				//   animacion (se congelo a 0 durante el temblor).
+				object[0].animationSpeed = 0x100
+				TRH_phase = 3
+				TRH_timer = 0
+			end if
+		end if
+		// FASE 3 - transformacion REAL del motor (SuperSonic.ani) y
+		//   temblor DETENIDO. 60 frames de espera con Sonic quieto.
+		if TRH_phase == 3
+			if TRH_timer == 0
+				screen.shakeY = 0
+				// la esmeralda se para 128 px encima de Sonic
+				temp0 = object[0].xpos
+				temp0 += 0x300000
+				temp2 = object[0].ypos
+				temp2 -= 0x800000
+				foreach (TypeName[Chaos Emerald], arrayPos0, ALL_ENTITIES)
+					object[arrayPos0].xpos = temp0
+					object[arrayPos0].ypos = temp2
+					object[arrayPos0].alpha = 256
+				next
+				currentPlayer = 0
+				CallFunction(PlayerObject_SuperTransform)
+			end if
+			TRH_timer++
+			if TRH_timer >= 60
+				stage.pauseEnabled = 1
+				TRH_phase = 4
+				TRH_timer = 0
+			end if
+		end if
+		// FASE 4 - Sonic camina SOLO (xpos movido por el script,
+		//   controlMode sigue -1) hasta el portal TimeTravel (x=13700).
+		//   Al llegar viaja al Good Future: saveRAM[2000]=5,
+		//   saveRAM[2008]=1 y LoadStage() a listPos 39. El propio
+		//   objeto TimeTravel viaja tambien si se toca (<16 px), con
+		//   los mismos valores, asi que ambos caminos coinciden.
+		if TRH_phase == 4
+			temp0 = TRH_TT_X
+			if object[0].ixpos >= temp0
+				object[0].animation = ANI_STOPPED
+				TRH_phase = 5
+				// TRH: la cinematica Olympus (Hidden Place) manda a la
+				//   siguiente era = FUTURE. Casino Night act 1 = listPos 6.
+				//   Antes iba a listPos 39 (Good Future de Emerald Hill).
+				saveRAM[2000] = 3
+				saveRAM[2008] = 1
+				WriteSaveRAM()
+				starPostID = 0
+				if saveRAM[2022] == 1
+					stage.listPos = saveRAM[2020]
+					starPostID = saveRAM[2021]
+					saveRAM[2022] = 0
+				else
+					stage.listPos = 20
+				end if
+				LoadStage()
+			else
+				if object[0].type == TypeName[Player Object]
+					object[0].animation = ANI_WALKING
+				end if
+				// [TRH] PIERNAS ANIMADAS: speed > 0 hace que el propio
+				//   estado del jugador (HandleGround) ejecute su maquina
+				//   de caminata: avanza los frames de ANI_WALKING y
+				//   integra xpos en cada frame. controlMode = -1 solo
+				//   corta el INPUT, no la fisica. La cerradura (fase > 0)
+				//   pone speed = 0 antes de este bloque, aqui se
+				//   restaura para que el jugador lo lea al frame siguiente.
+				//   Se conserva el paso manual de xpos como respaldo.
+				object[0].direction = FLIP_NONE
+				object[0].speed = 0x28000
+				object[0].xpos += 0x28000
+			end if
+		end if
+	end if
+end event
+
+
+event ObjectDraw
+	if TRH_phase == 91
+		if object.ixpos == TRH_hostX
+			// VIDEO OLYMPUS: fondo negro + frame con la paleta del video
+			DrawRect(0, 0, screen.xsize, screen.ysize, 0, 0, 0, 255)
+			temp0 = TRH_vidBase
+			temp0 += TRH_vidFrame
+			temp1 = TRH_vidFrame
+			temp1 %= 4
+			temp2 = TRH_vidFrame
+			temp2 /= 4
+			temp1 *= 384
+			temp2 *= 216
+			EditFrame(temp0, 0, 0, 384, 216, temp1, temp2)
+			temp1 = screen.xcenter
+			temp1 -= 192
+			temp2 = screen.ycenter
+			temp2 -= 108
+			DrawSpriteScreenXY(temp0, temp1, temp2)
+		end if
+	else
+		temp0 = stage.waterLevel
+		temp0 -= screen.yoffset
+		if temp0 < 0
+			temp0 = 0
+		end if
+		if temp0 > screen.ysize
+			temp0 = screen.ysize
+		end if
+		SetActivePalette(0, 0, temp0)
+		if HPZSetup_value33 > 0
+			SetActivePalette(2, temp0, screen.ysize)
+		else
+			SetActivePalette(1, temp0, screen.ysize)
+		end if
+		AddDrawListEntityRef(2, object.entityPos)
+	end if
+	// [TRH] PORTAL falso ELIMINADO: no hay Anillo Gigante estatico aqui.
+	//      El portal REAL es el objeto TimeTravel (tipo 82,
+	//      TRH/TimeTravel.txt, con portal ANIMADO) al final de la arena.
+	// TRH: en HPZ Act1 limpiar el bloqueo de control tras el update.
+	if stage.actNum == 1
+		object[0].controlLock = 0
+	end if
+end event
+
+
+event ObjectStartup
+	// Frames del video Olympus (384x216, 4 columnas, 18 filas = 72).
+	// SpriteFrame SOLO funciona en ObjectStartup (EVENT_SETUP).
+	temp3 = 0
+	while temp3 < 72
+		temp4 = temp3
+		temp4 %= 4
+		temp4 *= 384
+		temp5 = temp3
+		temp5 /= 4
+		temp5 *= 216
+		SpriteFrame(0, 0, 384, 216, temp4, temp5)
+		temp3++
+	loop
+	// [TRH] la hoja del ANILLO GIGANTE se movio a TRH/TimeTravel.txt:
+	//      el portal REAL de la cinematica es el objeto TimeTravel.
+	switch stage.actNum
+		case 1 //Taxman			
+			SetMusicTrack("HiddenPalace.ogg", 0, 0x48EF)
+			SpeedUpMusic = HPZSetup_Function101
+			SlowDownMusic = HPZSetup_Function102
+			// TRH: no secuestrar Zone28 (Warp Point, listPos 46) hacia Olympus.
+			//   Sin esta guarda, al clonar Zone08 -> Zone28 (actNum 1) esta linea
+			//   fijaria listPos=20 y romperia la maquina del tiempo (listPos 46).
+			if stage.listPos != 46
+				stage.listPos = 35
+			end if
+			stage.activeList = REGULAR_STAGE
+			// TRH: en HPZ Act1 aparecer mirando a la derecha.
+			object[0].direction = FLIP_NONE
+			break
+		case 2 //Proto
+			object[0].speed = 0x40000
+			while currentPlayer < playerCount
+				object[currentPlayer].xpos = 0x15E 0000
+				object[currentPlayer].ypos = 0x1AB 0000
+				currentPlayer++
+			loop
+			screen.cameraX = object[0].ixpos
+			screen.cameraY = object[0].iypos
+		case 3 //Test Arena
+			SetMusicTrack("Extra.ogg", 0, 0xE9CC)
+			currentPlayer = 0
+			
+			stage.milliSeconds = 0
+			stage.seconds = 0
+			stage.minutes = 0
+			break
+	end switch
+	if stage.player2Enabled == 1
+		object[1].xpos = object[0].xpos
+	end if
+	animalType1 = TypeName[Rocky]
+	animalType2 = TypeName[Mocky]
+	SetPaletteEntry(0, 192, 0)
+	// RESTAURADO 2026-10-17 (forense de Zone08): la escena de Hidden
+	//   Palace NO tiene NINGUNA entidad HPZ Setup (652 entidades, 0 de
+	//   tipo 40), asi que object[10] ES LA UNICA INSTANCIA del script
+	//   en Olympus. Sin ella no corren ObjectMain (cinematica) ni
+	//   ObjectDraw (bandas de paleta del agua => "agua congelada").
+	//   SIN gate listPos: Zone28 NO registra HPZ Setup (verificado en
+	//   su StageConfig), asi que el auto-hinca es seguro en cualquier
+	//   slot de entrada de Zone08.
+		object[10].type = TypeName[HPZ Setup]
+		object[10].priority = PRIORITY_ACTIVE
+		object[10].drawOrder = 0
+		object[10].value5 = 2
+		object[10].value7 = 4
+	LoadPalette("HPZ_WaterPal.act", 1, 0, 0, 256)
+	CallFunction(HPZSetup_Function98)
+	CallFunction(HPZSetup_Function99)
+	CallFunction(HPZSetup_Function100)
+	LoadPalette("ElectricFlash.act", 2, 0, 0, 256)
+	HPZSetup_value33 = 0
+	HPZSetup_value34 = 0
+	SetLayerDeformation(1, 64, 2, 0, 0, 0)
+	temp0 = 0
+	while temp0 < 256
+		Rand(temp1, 4)
+		SetLayerDeformation(3, 16, temp1, 1, temp0, 16)
+		temp0 += 16
+	loop
+	CallFunction(HPZSetup_Function103)
+
+
+	// ====================================================================
+	// TRH TAREA 6 - ANILLO GIGANTE AMARILLO de la maquina del tiempo
+	//   (Zone28 / listPos 46).  Reemplaza al placeholder "Original Gem".
+	// --------------------------------------------------------------------
+	// El motor RSDKv4 NO admite escala de sprites, asi que el "anillo
+	// gigante estilo Special Stage" se construye con 16 objetos Ring
+	// EXISTENTES (amarillo/oro naturales, girando y coleccionables)
+	// dispuestos en un circulo de radio 44 px => diametro ~104 px
+	// (6.5x un anillo normal de 16 px).  Coordenada central = TRH_TM_X/Y
+	// (coordenadas de PRUEBA del trigger, ver alias arriba).
+	// El trigger de proximidad NO cambia: sigue siendo el bloque de
+	// TRH_TM_X/TRH_TM_Y/TRH_TM_R de mas arriba.
+	// (El Original Gem original queda comentado abajo para poder revertir.)
+	// ====================================================================
+	// MOVIDO a ObjectMain (TRH_ringinit).  El CreateTempObject durante
+	// ObjectStartup corrompia la entidad[0] (jugador) y daba PANTALLA NEGRA
+	// en Zone28 (Warp Point).  Condicion imposible: el bloque queda muerto.
+	if TRH_ringinit == 999
+		temp2 = 0
+		while temp2 < 16
+			switch temp2
+				case 0
+					temp0 = TRH_TM_X
+					temp0 += 44
+					temp1 = TRH_TM_Y
+					break
+				case 1
+					temp0 = TRH_TM_X
+					temp0 += 41
+					temp1 = TRH_TM_Y
+					temp1 += 17
+					break
+				case 2
+					temp0 = TRH_TM_X
+					temp0 += 31
+					temp1 = TRH_TM_Y
+					temp1 += 31
+					break
+				case 3
+					temp0 = TRH_TM_X
+					temp0 += 17
+					temp1 = TRH_TM_Y
+					temp1 += 41
+					break
+				case 4
+					temp0 = TRH_TM_X
+					temp1 = TRH_TM_Y
+					temp1 += 44
+					break
+				case 5
+					temp0 = TRH_TM_X
+					temp0 -= 17
+					temp1 = TRH_TM_Y
+					temp1 += 41
+					break
+				case 6
+					temp0 = TRH_TM_X
+					temp0 -= 31
+					temp1 = TRH_TM_Y
+					temp1 += 31
+					break
+				case 7
+					temp0 = TRH_TM_X
+					temp0 -= 41
+					temp1 = TRH_TM_Y
+					temp1 += 17
+					break
+				case 8
+					temp0 = TRH_TM_X
+					temp0 -= 44
+					temp1 = TRH_TM_Y
+					break
+				case 9
+					temp0 = TRH_TM_X
+					temp0 -= 41
+					temp1 = TRH_TM_Y
+					temp1 -= 17
+					break
+				case 10
+					temp0 = TRH_TM_X
+					temp0 -= 31
+					temp1 = TRH_TM_Y
+					temp1 -= 31
+					break
+				case 11
+					temp0 = TRH_TM_X
+					temp0 -= 17
+					temp1 = TRH_TM_Y
+					temp1 -= 41
+					break
+				case 12
+					temp0 = TRH_TM_X
+					temp1 = TRH_TM_Y
+					temp1 -= 44
+					break
+				case 13
+					temp0 = TRH_TM_X
+					temp0 += 17
+					temp1 = TRH_TM_Y
+					temp1 -= 41
+					break
+				case 14
+					temp0 = TRH_TM_X
+					temp0 += 31
+					temp1 = TRH_TM_Y
+					temp1 -= 31
+					break
+				case 15
+					temp0 = TRH_TM_X
+					temp0 += 41
+					temp1 = TRH_TM_Y
+					temp1 -= 17
+					break
+			end switch
+			temp0 <<= 16
+			temp1 <<= 16
+			CreateTempObject(TypeName[Ring], 0, temp0, temp1)
+			object[tempObjectPos].priority = PRIORITY_ACTIVE
+			object[tempObjectPos].drawOrder = 4
+			temp2++
+		loop
+		// ----------------------------------------------------------------
+		// (TAREA 2/5 original - DESACTIVADO, era el Original Gem):
+		//   SetPaletteEntry(0, 177, 0x002000) ... SetPaletteEntry(0, 191, 0xC0A040)
+		//   CreateTempObject(TypeName[Original Gem], 0, temp0, temp1)
+		// ----------------------------------------------------------------
+	end if
+end event
+
+function HPZSetup_Function103
+	switch stage.actNum
+		case 1 //Taxman
+			// TRH: Zone28 (Warp Point) y Olympus (Zone08, listPos 20) NO deben
+			// rebotar a titulo. Nota: saveRAM[481] nunca se escribe en todo el
+			// mod ni en la base => "if saveRAM[481] == 0" es SIEMPRE TRUE, asi
+			// que sin estas guardas Olympus rebotaba al titulo en el arranque
+			// (sintoma: "Olympus no carga"). PARTE 11: guarda listPos 20 anadida.
+			if stage.listPos != 46
+				if stage.listPos != 35
+					if saveRAM[481] == 0
+						CallFunction(StageSetup_LoadStageState)
+						stage.activeList = PRESENTATION_STAGE
+						stage.listPos = 0
+						// TRH FIX4: starPostID = 0 ANTES de cargar.
+						starPostID = 0
+						LoadStage()
+					end if
+				end if
+			end if
+			break
+		case 2 //Proto
+			stage.listPos = specialStage.nextZone
+			stage.activeList = REGULAR_STAGE
+			if recGoggles == 2		
+				recGoggles = 1
+				starPostID = 428				
+			else
+				recGoggles = 0
+				CallFunction(StageSetup_LoadStageState)
+				stage.activeList = PRESENTATION_STAGE
+				stage.listPos = 0
+				// TRH FIX4: starPostID = 0 ANTES de cargar.
+				starPostID = 0
+				LoadStage()
+			end if
+			break
+	end switch
+end function
+
+event RSDKDraw
+	//DrawSprite(0)
+end event
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	//SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event

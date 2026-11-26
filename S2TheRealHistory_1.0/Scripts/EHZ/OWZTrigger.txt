@@ -1,0 +1,147 @@
+// ----------------------------------
+// RSDK Project: Sonic 2
+// Script Description: OWZ Trigger Object
+// Script Author: Christian Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+// ========================
+// Aliases
+// ========================
+
+private alias object.value0 : object.timer
+
+private alias 0 : OWZTRIGGER_BLANK
+private alias 1 : OWZTRIGGER_PAUSE
+private alias 2 : OWZTRIGGER_FADEOUT
+
+// Player Aliases
+private alias object.state 		: player.state
+private alias object.yvel 		: player.yvel
+private alias object.animation 	: player.animation
+private alias object.value0 	: player.rings
+private alias object.value25 	: player.gravityStrength
+
+// Game Modes
+private alias 2 : 2
+
+
+// ========================
+// Events
+// ========================
+
+event ObjectUpdate
+	// Check if the camera bounds should change now
+	BoxCollisionTest(C_TOUCH, object.entityPos, -68, 0, 68, 5120, 0, 0, 0, 0, 0)
+	if checkResult == true
+		stage.curYBoundary1 = -0x1000
+	end if
+
+	foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+		BoxCollisionTest(C_TOUCH, object.entityPos, -68, 0, 68, 256, currentPlayer, 0, 0, 0, 0)
+		temp0 = checkResult
+		// El motor no define Player_State_Static. El proposito del guard (segun el propio
+		// comentario) es que Tails volando no dispare el trigger, asi que se comprueba
+		// directamente por estado real, con el mismo patron que CCZ\HFan.txt.
+		CheckEqual(player[currentPlayer].state, PlayerObject_HandleTailsFlight)
+		temp1 = checkResult
+		CheckEqual(player[currentPlayer].state, PlayerObject_HandleFlyCarry)
+		temp1 |= checkResult
+		CheckEqual(temp1, 0)
+		temp0 &= checkResult
+		if temp0 == true
+			// Player has touched this object, start the transition
+
+			// Player should already be in this state, but it doesn't hurt
+			// player[currentPlayer].state = PlayerObject_HandleAir
+
+			// Enforce maximum Y velocity
+			// if player[currentPlayer].yvel >= 0x100000
+			// 	player[currentPlayer].yvel = 0x100000
+			// 	player[currentPlayer].yvel -= player[currentPlayer].gravityStrength
+			// end if
+
+			// If P1, switch to main state
+			if currentPlayer == 0
+				if object.state == OWZTRIGGER_BLANK
+					object.state = OWZTRIGGER_PAUSE
+				end if
+			end if
+		end if
+	next
+
+	switch object.state
+	case OWZTRIGGER_PAUSE
+		// Letting the player fall for a second
+		object.timer++
+		if object.timer == 40
+			object.timer = 0
+			object.state++
+		end if
+		break
+
+	case OWZTRIGGER_FADEOUT
+		// Fading out to go to OWZ
+		music.volume -= 4
+		object.timer += 24
+		SetScreenFade(0, 0, 0, object.timer)
+		if object.timer == 384
+			starPostID = 0
+			stage.listPos = 2
+			StopMusic()
+			LoadStage()
+		end if
+		break
+		
+	end switch
+end event
+
+
+event ObjectStartup
+	// Cycle through all SSZ Trigger objects and...
+	foreach (TypeName[SSZ Trigger], arrayPos0, ALL_ENTITIES)
+		if options.gameMode == 2
+			// Erase it if in time attack
+			ResetObjectEntity(arrayPos0, TypeName[Blank Object], 0, 0, 0)
+		else
+			if options.vsMode == false
+				// Give it the XBOUNDS priority if in single player
+				object[arrayPos0].priority = PRIORITY_XBOUNDS
+			else
+				// Erase it if in 2P mode
+				ResetObjectEntity(arrayPos0, TypeName[Blank Object], 0, 0, 0)
+			end if
+		end if
+	next
+end event
+
+
+// ========================
+// Editor Events
+// ========================
+
+event RSDKDraw
+	DrawSprite(0)
+	
+	if editor.showGizmos == true
+		editor.drawingOverlay = true
+		
+		// Draw this object's giant hitbox, a lone "T" icon doesn't do this object justice
+		
+		temp0 = 68
+		temp1 = -512
+		temp2 = 68
+		temp3 = 5120
+		CallFunction(EditorHelpers_DrawHitbox)
+		
+		editor.drawingOverlay = false
+	end if
+end event
+
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-8, -8, 16, 16, 168, 18) // "trigger" - #0
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end event

@@ -1,0 +1,72 @@
+// ----------------------------------
+// RSDK Project: Sonic 1/Sonic 2
+// Script Description: Big Mushroom Object
+// Script Author: Christan Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+//-------Aliases-------//
+private alias 46 : TYPE_BIGMUSHROOM
+
+// Function declarations
+reserve function BigMushroom_DebugDraw
+reserve function BigMushroom_DebugSpawn
+
+// Static Values
+
+// Tables
+
+function BigMushroom_DebugDraw
+	temp0 = object.direction
+	temp0 &= 1
+	DrawSprite(temp0)
+end function
+
+
+function BigMushroom_DebugSpawn
+	CreateTempObject(TypeName[Big Mushroom], 0, object.xpos, object.ypos)
+	object[tempObjectPos].drawOrder = 3
+	object[tempObjectPos].propertyValue = object.direction
+	object[tempObjectPos].propertyValue &= 1
+end function
+
+
+event ObjectDraw
+	DrawSprite(0)
+end event
+
+
+event ObjectStartup
+	CheckCurrentStageFolder("Zone13")
+	if checkResult == 1
+		LoadSpriteSheet("WZ/Objects.gif")
+		SpriteFrame(-8, -21, 33, 37, 66, 95)
+	else
+		// TRH FIX HONGOS: la rama else (Zone26 futuro bueno) cargaba el
+		//   frame (111,333) de Objects.gif (256x256) = FUERA DE LIMITES =>
+		//   hongos invisibles. Ese frame vive en Objects2.gif (512x512),
+		//   asi que aqui se carga esa hoja.
+		LoadSpriteSheet("WZ/Objects2.gif")
+		SpriteFrame(-8, -8, 16, 16, 111, 333)
+	end if
+	arrayPos0 = 32
+	while arrayPos0 < 0x420
+		if object[arrayPos0].type == TypeName[Big Mushroom]
+			object[arrayPos0].drawOrder = 3
+		end if
+		arrayPos0++
+	loop
+	SetTableValue(TypeName[Big Mushroom], DebugMode_ObjCount, DebugMode_TypesTable)
+	SetTableValue(BigMushroom_DebugDraw, DebugMode_ObjCount, DebugMode_DrawTable)
+	SetTableValue(BigMushroom_DebugSpawn, DebugMode_ObjCount, DebugMode_SpawnTable)
+	DebugMode_ObjCount++
+end event
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event

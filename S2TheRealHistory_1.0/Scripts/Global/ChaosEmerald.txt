@@ -1,0 +1,91 @@
+// ----------------------------------
+// RSDK Project: Sonic 2 - The Real History
+// Script Description: Chaos Emerald Object (esmeralda 2D recogible)
+// Script Author: S2TRH
+// ----------------------------------
+
+//-------Aliases-------//
+// NOTA: NO se declara "private alias N : TYPE_..." a proposito.
+// El ID numerico del tipo depende de la zona en la que se registre el objeto
+// (39 objetos globales + indice dentro del StageConfig de esa zona), asi que el
+// objeto se referencia SIEMPRE por nombre:  TypeName[Chaos Emerald]
+//
+// object.value0 = numero de esmeralda (1..7)  ->  sprite y saveRAM[2000 + n]
+// object.value1 = 0 pendiente / 1 ya recolectada
+
+
+event ObjectMain
+	if object.value1 == 0
+		foreach (GROUP_PLAYERS, currentPlayer, ACTIVE_ENTITIES)
+			BoxCollisionTest(C_TOUCH, object.entityPos, -12, -12, 12, 12, currentPlayer, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO, HITBOX_AUTO)
+			if checkResult == 1
+				object.value1 = 1
+				temp0 = object.value0
+				temp0 += 2000
+				saveRAM[temp0] = 1
+				// TRH TAREA 2: sincronizar con el contador NATIVO de esmeraldas.
+				// specialStage.emeralds es una mascara de bits (bit 0..6 = esmeralda 1..7).
+				// Al llegar a 127 (las 7 bits) se activa Super Sonic, y el guardado base
+				// (ActFinish -> saveRAM -> MainMenu load) lo persiste entre partidas.
+				// TRH FIX: RSDKv4 no admite aritmetica inline en operandos de llamada,
+				// asi que el indice de bit se calcula antes en un temp.
+				temp1 = object.value0
+				temp1 -= 1
+				SetBit(specialStage.emeralds, temp1, 1)
+				PlaySfx(SfxName[Emerald], 0)
+			end if
+		next
+	end if
+end event
+
+
+event ObjectDraw
+	if object.value1 == 0
+		temp0 = object.value0
+		if temp0 > 0
+			temp0--
+			// TRH FIX PALETA (2026-10-20): SE REVIRTIO por completo el
+			//   repintado verde estilo S1 de los indices 129..141. Motivo:
+			//   en RSDKv4 la paleta de banco 0 se consume AL FINAL del frame,
+			//   asi que el patron guardar->pintar->dibujar->restaurar NO
+			//   protegia a nadie: el HUD (cuadro gris) y Super Sonic
+			//   (amarillo base) se dibujaban con la rampa verde. Ademas
+			//   129..141 en Zone08 pertenece a otros sprites (p.ej. Stegway).
+			//   La esmeralda se dibuja ya con los colores propios del
+			//   escenario (tono azul) sin tocar la paleta en absoluto.
+			DrawSprite(temp0)
+		end if
+	end if
+end event
+
+
+event ObjectStartup
+	LoadSpriteSheet("Special/Objects.gif")
+	// TRH TAREA 3 (revisada): los colores arcoiris de las esmeraldas se aplican
+	// YA NO aqui. Antes se escribian en ObjectStartup y dejaban el banco 0
+	// (indices 129-141) en arcoiris toda la etapa => cualquier sprite con
+	// indices 129-141 (p.ej. el Stegway de Olympus) salia arcoiris fuera del
+	// agua. Ahora se pintan SOLO durante el Draw de la esmeralda y se
+	// restauran en cuanto termina de dibujarse (ver ObjectDraw).
+	// Los sprites vienen de Special/Objects.gif (y=239) y su color vive en la
+	// paleta del Special Stage (row 0, indices 129-141).
+	// Las 7 esmeraldas del Special Stage, reutilizadas tal cual (20x20 en y=239)
+	SpriteFrame(-10, -10, 20, 20, 1, 239)
+	SpriteFrame(-10, -10, 20, 20, 22, 239)
+	SpriteFrame(-10, -10, 20, 20, 43, 239)
+	SpriteFrame(-10, -10, 20, 20, 64, 239)
+	SpriteFrame(-10, -10, 20, 20, 85, 239)
+	SpriteFrame(-10, -10, 20, 20, 106, 239)
+	SpriteFrame(-10, -10, 20, 20, 127, 239)
+end event
+
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+
+event RSDKLoad
+	LoadSpriteSheet("Global/Display.gif")
+	SpriteFrame(-16, -16, 32, 32, 1, 143)
+end event
