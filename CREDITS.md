@@ -13,6 +13,10 @@ thanks everyone involved.
 > was referenced from public community releases. If any author wants their
 > content removed, open an issue and it will be handled in an update.
 
+The original zone and asset authors did not share this material with the project
+and did not authorize its inclusion. It comes from public community releases; no
+permission or endorsement is claimed.
+
 ---
 
 ## Base game and engine

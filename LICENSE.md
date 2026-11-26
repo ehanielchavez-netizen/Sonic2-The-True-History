@@ -37,7 +37,8 @@ release of Sonic 2 Absolute, SEGA's games, or the third-party mods referenced in
 ## 3. Third-party material
 
 Zones, scripts, sprites, music and other assets imported from community projects
-remain the property of their respective authors and are used with credit. This
+remain the property of their respective authors and are used with credit. The
+original authors did not share or authorize this material for the project. This
 license does **not** grant you any rights over that material. If you want to
 reuse a third-party asset, contact its original author.
 

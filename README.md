@@ -163,6 +163,10 @@ More details are in the in-game readmes:
 This mod would not exist without the work of the Sonic 2 Absolute community.
 Full credits and source notes are in [CREDITS.md](CREDITS.md).
 
+The original zone and asset authors did not provide or authorize this material
+for the project, and it was not privately shared. It comes from public community
+releases. Credits can be corrected or removed on request.
+
 Special thanks to:
 
 - **Team Forever** — Sonic 2 Absolute, engine, scripts and base content.
