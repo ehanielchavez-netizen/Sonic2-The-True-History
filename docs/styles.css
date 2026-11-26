@@ -124,13 +124,14 @@ a:hover { color: #b7f0ff; }
 .brand-mark span { transform: skew(6deg); }
 
 .brand-copy { display: grid; gap: .1rem; }
-.brand-copy strong { font-size: .98rem; }
+.brand-copy strong { font-size: .98rem; white-space: nowrap; }
 .brand-copy small {
   font-family: var(--font-body);
   font-size: .62rem;
   letter-spacing: .22em;
   color: var(--cyan);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .nav-links {
@@ -869,6 +870,26 @@ a:hover { color: #b7f0ff; }
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .nav-links.is-open {
+    position: absolute;
+    top: 76px;
+    left: 20px;
+    right: 20px;
+    display: grid;
+    gap: .2rem;
+    padding: .7rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    background: rgba(6, 10, 20, .97);
+    box-shadow: 0 25px 60px rgba(0,0,0,.5);
+  }
+  .nav-links.is-open a { padding: .8rem; }
+  .nav-actions .btn { display: none; }
+}
+
 @media (max-width: 1020px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-art { max-width: 720px; transform: none; }
