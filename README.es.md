@@ -31,8 +31,9 @@ campaña, el Level Select, la progresión de eras y el flujo del final; además
 importa varias zonas y pistas musicales de otros mods de la comunidad. También
 agrega transiciones propias como el **Warp Point** y **Hidden Palace**.
 
-El repositorio contiene **solo el mod**. **No** incluye Sonic 2 Absolute, el juego
-base, una ROM ni ningún ejecutable del juego.
+La descarga contiene **solo el mod**. El repositorio también aloja este sitio web.
+**No** incluye Sonic 2 Absolute, el juego base, una ROM ni ningún ejecutable del
+juego.
 
 ---
 

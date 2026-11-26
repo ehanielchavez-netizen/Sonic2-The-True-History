@@ -31,8 +31,9 @@ structure, the Level Select, the era progression, the boss/finale flow, and
 imports several zones and music tracks from community mods. It also adds custom
 transitions such as the **Warp Point** and **Hidden Palace**.
 
-The repository contains **only the mod**. It does **not** include Sonic 2
-Absolute, the base game, a ROM, or any game executable.
+The download contains **only the mod**. The repository also hosts this website.
+It does **not** include Sonic 2 Absolute, the base game, a ROM, or any game
+executable.
 
 ---
 
