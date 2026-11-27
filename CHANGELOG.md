@@ -21,7 +21,7 @@ The project follows a simple release numbering scheme:
 
 ### Genocide City
 
-- Removed the corrupted **Turret** objects from Genocide City Act 1 and Act 2. Killerbug and the remaining enemies stay.
+- Restored the **Turret** objects in Genocide City Act 1 and Act 2 and kept the rest of the enemies.
 - Kept the 1.0 fixes: Act 1 layer crash fix, red springs, Act 2 goal post and Killerbug sprite loading.
 - Kept the clean Cyber City music replacement.
 

@@ -100,8 +100,8 @@ ROUTE AND TRANSITIONS (1.5)
 - Past -> Ruined Present: direct, no Warp Point.
 - Warp Point 2: end of Ruined Present (Mystic Cave Act 2) -> Future.
 - Future -> Last Battle: direct, no Warp Point.
-- Ocean Wind uses the Enchanted Edition 1.5 theme.
-- Genocide City uses the Death Egg remix from Enchanted Edition 1.5.
+- Ocean Wind uses its Enchanted Edition theme.
+- Genocide City uses the mod's Death Egg remix.
 - Hidden Palace: reached by collecting the 7th Chaos Emerald.
   After Hidden Palace you return to the NEXT ZONE, not the same one.
 
@@ -109,7 +109,7 @@ ROUTE AND TRANSITIONS (1.5)
 KNOWN ISSUES
 ============================================================
 
-- Turrets were removed from Genocide City in 1.5 because of a visual bug; Killerbug and the other enemies remain.
+- All Genocide City enemies, including the turrets, are present.
 - Blue Ocean is not a new level: it is renamed Hydrocity.
 - Genocide City 2 is not included.
 - Olympus and Madness Mountain are not fully playable.

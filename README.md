@@ -84,9 +84,9 @@ A few honest notes:
 ## What's new in 1.5
 
 - Corrected the campaign route: **Warp Point 1** ends the Present, **Past → Ruined Present is direct**, **Warp Point 2** ends the Ruined Present, and **Future → Last Battle is direct**.
-- **Ocean Wind** now uses the Enchanted Edition 1.5 theme, and **Genocide City** uses the Death Egg remix from the same source.
+- **Ocean Wind** uses its Enchanted Edition theme, and **Genocide City** uses the mod's **Death Egg remix**.
 - **Hidden Palace** is now the secret zone reached by collecting the **7th Chaos Emerald**; after it you return to the **next zone**, not the same one.
-- Removed the corrupted **Genocide City turrets** from Act 1 and Act 2; Killerbug and the other enemies remain.
+- Restored the **Genocide City turrets** and the rest of the enemies in Act 1 and Act 2.
 - Kept the 1.0 fixes: real Genocide City layout, Act 1 layer crash fix, red springs, Act 2 goal post, Killerbug sprites, Warp Point 1 video, Hidden Palace, and clean Cyber City music.
 - Base `Data/Game/GameConfig.bin` and `Scripts/LevelSelect/MenuControl.txt` remain untouched.
 

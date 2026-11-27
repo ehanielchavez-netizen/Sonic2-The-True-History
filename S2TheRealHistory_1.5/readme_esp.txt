@@ -107,7 +107,7 @@ RUTA Y TRANSICIONES (1.5)
 PROBLEMAS CONOCIDOS
 ============================================================
 
-- Las torretas de Genocide City se retiraron en la 1.5 por un fallo visual; Killerbug y el resto de enemigos siguen.
+- Todos los enemigos de Genocide City, incluidas las torretas, estan presentes.
 - Blue Ocean no es un nivel nuevo: es Hydrocity renombrado.
 - Genocide City 2 no esta incluido.
 - No hay Olympus ni Madness Mountain jugables completos.
