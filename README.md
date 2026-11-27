@@ -7,7 +7,7 @@
 
 Scrapped zones. Reordered eras. One journey through time.
 
-[**Download v1.0**](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest) · [Website](https://ehanielchavez-netizen.github.io/Sonic2-The-True-History/) · [Español](README.es.md) · [Credits](CREDITS.md)
+[**Download v1.5**](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest) · [Website](https://ehanielchavez-netizen.github.io/Sonic2-The-True-History/) · [Español](README.es.md) · [Credits](CREDITS.md)
 
 ![Sonic 2: The True History — Genocide City](docs/assets/genocide-city.png)
 
@@ -81,21 +81,13 @@ A few honest notes:
 
 ---
 
-## What's new in 1.0
+## What's new in 1.5
 
-- Rebuilt the campaign order and Level Select for the full Present → Past →
-  Ruined Present → Future → Last Battle route.
-- Added the **Genocide City** route, including a layer fix that prevents the
-  stage from crashing.
-- Removed the Genocide City Star Posts in 1.0 because of a checkpoint bug.
-- Normalized the Genocide City springs to red and added a goal post to Act 2 so
-  the act can be completed.
-- Fixed the **Killerbug** sprite loading in Genocide City.
-- Restored the **Warp Point 1** video and sprite-sheet paths.
-- Routed the second Warp Point to **Hidden Palace**.
-- Replaced the corrupt Cyber City music file with a clean copy.
-- Kept the base `Data/Game/GameConfig.bin` and
-  `Scripts/LevelSelect/MenuControl.txt` untouched.
+- Corrected the campaign route: **Warp Point 1** ends the Present, **Past → Ruined Present is direct**, **Warp Point 2** ends the Ruined Present, and **Future → Last Battle is direct**.
+- **Hidden Palace** is now the secret zone reached by collecting the **7th Chaos Emerald**; after it you return to the **next zone**, not the same one.
+- Removed the corrupted **Genocide City turrets** from Act 1 and Act 2; Killerbug and the other enemies remain.
+- Kept the 1.0 fixes: real Genocide City layout, Act 1 layer crash fix, red springs, Act 2 goal post, Killerbug sprites, Warp Point 1 video, Hidden Palace, and clean Cyber City music.
+- Base `Data/Game/GameConfig.bin` and `Scripts/LevelSelect/MenuControl.txt` remain untouched.
 
 See [CHANGELOG.md](CHANGELOG.md) for the full technical notes.
 
@@ -111,9 +103,9 @@ See [CHANGELOG.md](CHANGELOG.md) for the full technical notes.
 
 ### Steps
 
-1. Download the latest **v1.0** release ZIP from the
+1. Download the latest **v1.5** release ZIP from the
    [Releases page](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest).
-2. Extract the folder **`S2TheRealHistory_1.0`** into:
+2. Extract the folder **`S2TheRealHistory_1.5`** into:
 
    ```text
    Sonic2Absolute_1.1.1_EasySetup\Mods\
@@ -143,7 +135,7 @@ for keyboard and controller bindings.
 
 - **Blue Ocean** is Hydrocity with a different name; it is not a new level.
 - **Genocide City 2** is not included.
-- **Genocide City Star Posts are disabled in 1.0** because of a checkpoint bug.
+- **Genocide City Star Posts are disabled in 1.5** because of a checkpoint bug.
   Act 1 and Act 2 remain playable, and Act 2 has a goal post.
 - **Genocide City Act 2** uses the GCZ source layout available for this release;
   it is not a completely original Act 2.
@@ -153,8 +145,8 @@ for keyboard and controller bindings.
   were not overwritten.
 
 More details are in the in-game readmes:
-[English](S2TheRealHistory_1.0/readme_us.txt) ·
-[Spanish](S2TheRealHistory_1.0/readme_esp.txt).
+[English](S2TheRealHistory_1.5/readme_us.txt) ·
+[Spanish](S2TheRealHistory_1.5/readme_esp.txt).
 
 ---
 

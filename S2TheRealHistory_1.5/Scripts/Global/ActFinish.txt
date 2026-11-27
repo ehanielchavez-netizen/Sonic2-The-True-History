@@ -363,17 +363,19 @@ event ObjectMain
 					stage.listPos = 17
 					break
 				case 17
-					// Hill Top Act2 (ultimo de PAST) -> HIDDEN PALACE -> RUINED (Rock World)
+					// Hill Top Act2 (ultimo de PAST) -> RUINED (Rock World) directo
 					saveRAM[2009] = 0
 					stage.activeList = REGULAR_STAGE
-					stage.listPos = 35
+					stage.listPos = 24
 					break
 				case 20
 					stage.listPos = 21
 					break
 				case 21
-					// Mystic Cave Act2 (ultimo de RUINED) -> FUTURE
-					stage.listPos = 26
+					// Mystic Cave Act2 (ultimo de RUINED) -> WARP POINT 2 -> FUTURE
+					saveRAM[2009] = 0
+					stage.activeList = REGULAR_STAGE
+					stage.listPos = 46
 					break
 				case 22
 					stage.listPos = 23
@@ -414,10 +416,13 @@ event ObjectMain
 					stage.listPos = 22
 					break
 				case 30
-					stage.listPos = 46
+					// Final del FUTURE -> LAST BATTLE directo (sin Warp Point)
+					stage.activeList = REGULAR_STAGE
+					stage.listPos = 34
 					break
 				case 46
-					stage.listPos = 34
+					// Warp Point 2 (RUINED -> FUTURE) -> Casino Night Act1
+					stage.listPos = 26
 					break
 				case 34
 					stage.listPos = 31
@@ -431,8 +436,72 @@ event ObjectMain
 					break
 				case 35
 					if saveRAM[2022] == 1
-						stage.listPos = saveRAM[2020]
-						starPostID = saveRAM[2021]
+						temp0 = saveRAM[2020]
+						// TRH 1.5: al salir de Hidden Palace se avanza a la
+						// SIGUIENTE ZONA, no se regresa a la misma.
+						switch temp0
+							case 0
+							case 1
+								temp0 = 2
+								break
+							case 2
+							case 3
+								temp0 = 4
+								break
+							case 4
+							case 5
+								temp0 = 6
+								break
+							case 6
+							case 7
+								temp0 = 8
+								break
+							case 8
+							case 9
+								temp0 = 10
+								break
+							case 10
+							case 11
+								temp0 = 12
+								break
+							case 12
+							case 13
+								temp0 = 14
+								break
+							case 14
+							case 15
+								temp0 = 16
+								break
+							case 16
+							case 17
+								temp0 = 24
+								break
+							case 24
+							case 25
+								temp0 = 22
+								break
+							case 22
+							case 23
+								temp0 = 20
+								break
+							case 20
+							case 21
+								temp0 = 26
+								break
+							case 26
+							case 27
+								temp0 = 28
+								break
+							case 28
+							case 29
+								temp0 = 30
+								break
+							case 30
+								temp0 = 34
+								break
+						end switch
+						stage.listPos = temp0
+						starPostID = 0
 						saveRAM[2022] = 0
 					else
 						stage.listPos = 24

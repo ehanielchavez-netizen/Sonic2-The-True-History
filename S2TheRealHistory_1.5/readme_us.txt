@@ -1,26 +1,20 @@
 SONIC 2: THE TRUE HISTORY
 A mod for Sonic 2 Absolute
 Author: Hanichav02
-Version: 1.0
-Release date: 2026-11-25
+Version: 1.5
 
 
 ============================================================
 WHAT IS THIS MOD?
 ============================================================
 
-Sonic 2: The True History is a campaign mod for Sonic 2 Absolute
-1.1.1 Easy Setup. It rebuilds the adventure as an alternate-history
-version of Sonic 2: the lost zones survived, the era order changed,
-and the whole game became a time-travel story.
+Sonic 2: The True History is a Sonic 2 Absolute mod that tries to
+recreate "the Sonic 2 that could have been": scrapped zones, prototype
+ideas and time travel.
 
-It is not just a color change or a reskin. It changes the Level
-Select, the era order and progression, and adds/imports zones from
-other community mods. It also adds custom transitions such as the
-Warp Point and Hidden Palace.
-
-The mod is distributed separately. The base game, its executable and
-its original files are not included.
+It is not just a color change or a reskin. It changes the Level Select,
+the era order and progression, and adds/imports zones from other
+community mods.
 
 
 ============================================================
@@ -37,7 +31,7 @@ PRESENT
 PAST
 - Tropical Sun
 - Aquatic Ruin
-- Blue Ocean (Hydrocity renamed)
+- Blue Ocean (renamed Hydrocity)
 - Hill Top
 
 RUINED PRESENT
@@ -53,7 +47,7 @@ FUTURE
 LAST BATTLE
 - Sky Chase
 - Wing Fortress
-- Death Egg original
+- Original Death Egg
 
 
 ============================================================
@@ -66,15 +60,8 @@ IMPORTANT / HONEST NOTES
 - Rock World is only in RUINED PRESENT. It was removed from PAST so
   the same zone would not be duplicated.
 
-- Genocide City 1 uses the Genocide City layout available from the
-  GCZ source. Genocide City 2 is not included in this version.
-
-- Genocide City Act 2 uses the GCZ source layout and includes a goal
-  post so the act can be completed. It is not a completely original
-  Act 2.
-
-- Star Posts are disabled in Genocide City in version 1.0 because of
-  a checkpoint bug. The acts remain playable.
+- Genocide City 1 uses a real Genocide City version.
+  Genocide City 2 is not included in this version.
 
 - Last Battle uses the original Death Egg. No extra Death Egg,
   Gauntlet or all-boss arena was included.
@@ -95,26 +82,34 @@ INSTALLATION
 ============================================================
 
 1. Have Sonic 2 Absolute 1.1.1 Easy Setup.
-2. Copy the folder "S2TheRealHistory_1.0" into:
+2. Copy the mod folder into:
    Sonic2Absolute_1.1.1_EasySetup\Mods\
-3. Open the game and enable the mod from the Mods menu.
+3. Open the game and enable the mod from the mods menu.
 4. Do not overwrite the base game files:
    - Data\Game\GameConfig.bin
    - Scripts\LevelSelect\MenuControl.txt
 
 The mod is meant to work as a layer on top of the base game.
-Back up your save data before installing or updating.
 
+
+============================================================
+ROUTE AND TRANSITIONS (1.5)
+============================================================
+
+- Warp Point 1: end of Present (Metropolis Act 2) -> Past.
+- Past -> Ruined Present: direct, no Warp Point.
+- Warp Point 2: end of Ruined Present (Mystic Cave Act 2) -> Future.
+- Future -> Last Battle: direct, no Warp Point.
+- Hidden Palace: reached by collecting the 7th Chaos Emerald.
+  After Hidden Palace you return to the NEXT ZONE, not the same one.
 
 ============================================================
 KNOWN ISSUES
 ============================================================
 
+- Turrets were removed from Genocide City in 1.5 because of a visual bug; Killerbug and the other enemies remain.
 - Blue Ocean is not a new level: it is renamed Hydrocity.
 - Genocide City 2 is not included.
-- Genocide City Star Posts are disabled in 1.0 because of a
-  checkpoint bug.
-- Genocide City Act 2 uses the available GCZ source layout.
 - Olympus and Madness Mountain are not fully playable.
 - Some imported levels may have visual or sound details that differ
   from their original versions.
@@ -136,8 +131,7 @@ CREDITS AND SOURCES
   Jungle Woods, Rocky Winter and Warp Point music.
 
 - S2A Expanded:
-  Sand Shower, base of Cyber City / Genocide City and CyberCity_F
-  music.
+  Sand Shower, Cyber City / Genocide City base and CyberCity_F music.
 
 - Sonic Dreamy Skies:
   Super3.ogg and Super3K.ogg music used by the mod.
@@ -148,8 +142,7 @@ CREDITS AND SOURCES
 
 - Dust Hill & Genocide City Over SS And CC:
   Genocide City / Dust Hill data used as a base and during
-  integration testing. Original mod by coolguy98; S2AE version by
-  Alice the ironic gaymer qween.
+  integration testing.
 
 - Sonic 2 Absolute EXTREME:
   Metropolis Acts used while testing Genocide City 2.
@@ -169,23 +162,27 @@ version.
 
 Important note: none of those authors directly collaborated on this
 mod or privately shared files. The material was taken from their
-public community releases. They are credited accordingly. If any
+public GameBanana releases. They are credited accordingly. If any
 author does not want their content to appear here, they can ask to
 have it taken down in an update.
 
+Note: some mods were tested during development and did not make it
+into the final version; thanks anyway to their authors for the
+reference material and testing.
+
 This is a non-profit fan-made mod. Sonic the Hedgehog and its
 characters belong to SEGA. Sonic 2 Absolute is a fan project by
-Team Forever. This mod is unofficial and is not affiliated with or
-endorsed by SEGA, Team Forever, or any credited author.
+Team Forever.
 
 
 ============================================================
 THANKS
 ============================================================
 
-Thanks for playing. This is my first mod and it was built step by
-step with testing, mistakes and fixes.
+Thanks for playing and for your patience during development.
+This is my first mod and it was built step by step with testing,
+mistakes and fixes.
 
-Version 1.0
+Version 1.5
 
 ENJOY!

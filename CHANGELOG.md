@@ -7,6 +7,30 @@ The project follows a simple release numbering scheme:
 
 ---
 
+## [1.5] — 2026-11-27
+
+### Campaign and transitions
+
+- Corrected the route to match the final design:
+  - **Warp Point 1:** end of Present (Metropolis Act 2) → Past.
+  - **Past → Ruined Present:** direct, no Warp Point.
+  - **Warp Point 2:** end of Ruined Present (Mystic Cave Act 2) → Future.
+  - **Future → Last Battle:** direct, no Warp Point.
+- **Hidden Palace** is now triggered by collecting the **7th Chaos Emerald**. After leaving it, the player returns to the **next zone**, not the same zone.
+- Removed the old Hill Top → Hidden Palace route.
+
+### Genocide City
+
+- Removed the corrupted **Turret** objects from Genocide City Act 1 and Act 2. Killerbug and the remaining enemies stay.
+- Kept the 1.0 fixes: Act 1 layer crash fix, red springs, Act 2 goal post and Killerbug sprite loading.
+- Kept the clean Cyber City music replacement.
+
+### Versioning
+
+- Renamed the release to **1.5** and updated the mod folder, in-game readmes and version fields.
+
+---
+
 ## [1.0] — 2026-11-25
 
 First public release.

@@ -110,4 +110,4 @@ third-party assets. If you are an author and want your material removed or a
 credit corrected, open an issue in this repository with the relevant details.
 Requests will be respected in the next update.
 
-Last updated: **2026-11-25** (version 1.0).
+Last updated: **2026-11-25** (version 1.5).
