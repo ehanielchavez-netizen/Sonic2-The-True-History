@@ -25,6 +25,11 @@ The project follows a simple release numbering scheme:
 - Kept the 1.0 fixes: Act 1 layer crash fix, red springs, Act 2 goal post and Killerbug sprite loading.
 - Kept the clean Cyber City music replacement.
 
+### Music
+
+- Ocean Wind now uses the Enchanted Edition 1.5 theme.
+- Genocide City now uses the Death Egg remix from Enchanted Edition 1.5; the final Death Egg music is unchanged.
+
 ### Versioning
 
 - Renamed the release to **1.5** and updated the mod folder, in-game readmes and version fields.

@@ -100,6 +100,8 @@ ROUTE AND TRANSITIONS (1.5)
 - Past -> Ruined Present: direct, no Warp Point.
 - Warp Point 2: end of Ruined Present (Mystic Cave Act 2) -> Future.
 - Future -> Last Battle: direct, no Warp Point.
+- Ocean Wind uses the Enchanted Edition 1.5 theme.
+- Genocide City uses the Death Egg remix from Enchanted Edition 1.5.
 - Hidden Palace: reached by collecting the 7th Chaos Emerald.
   After Hidden Palace you return to the NEXT ZONE, not the same one.
 

@@ -268,14 +268,14 @@ function CCZSetup_Function101
 		switch music.currentTrack
 		case 0
 			SetMusicTrack("Invincibility_F.ogg", 2, 0x76E4)
-			SwapMusicTrack("CyberCity.ogg", 0, 0x7AA16, 0x1EF0)
+			SwapMusicTrack("GenocideDeathEgg.ogg", 0, 0x7AA16, 0x1EF0)
 			break
 		case 2
-			SetMusicTrack("CyberCity.ogg", 0, 0x7AA16)
+			SetMusicTrack("GenocideDeathEgg.ogg", 0, 0x7AA16)
 			SwapMusicTrack("Invincibility_F.ogg", 2, 0x76E4, 0x1F40)
 			break
 		default
-			SetMusicTrack("CyberCity.ogg", 0, 0x7AA16)
+			SetMusicTrack("GenocideDeathEgg.ogg", 0, 0x7AA16)
 			SetMusicTrack("Invincibility_F.ogg", 2, 0x76E4)
 			break
 		end switch
@@ -296,14 +296,14 @@ function CCZSetup_Function102
 		switch music.currentTrack
 		case 0
 			SetMusicTrack("Invincibility.ogg", 2, 0x9A68)
-			SwapMusicTrack("CyberCity.ogg", 0, 0x9B0AA, 0x316A)
+			SwapMusicTrack("GenocideDeathEgg.ogg", 0, 0x9B0AA, 0x316A)
 			break
 		case 2
-			SetMusicTrack("CyberCity.ogg", 0, 0x9B0AA)
+			SetMusicTrack("GenocideDeathEgg.ogg", 0, 0x9B0AA)
 			SwapMusicTrack("Invincibility.ogg", 2, 0x9A68, 0x30D4)
 			break
 		default
-			SetMusicTrack("CyberCity.ogg", 0, 0x9B0AA)
+			SetMusicTrack("GenocideDeathEgg.ogg", 0, 0x9B0AA)
 			SetMusicTrack("Invincibility.ogg", 2, 0x9A68)
 			break
 		end switch
@@ -403,18 +403,18 @@ end event
 
 event ObjectStartup
 	if stage.actNum == 1
-		SetMusicTrack("CyberCity.ogg", 0, 0xE9CC)
+		SetMusicTrack("GenocideDeathEgg.ogg", 0, 0xE9CC)
 		SpeedUpMusic = CCZSetup_Function101
 		SlowDownMusic = CCZSetup_Function102
 	else
-		SetMusicTrack("CyberCity.ogg", 0, 0xE9CC)
+		SetMusicTrack("GenocideDeathEgg.ogg", 0, 0xE9CC)
 	end if
 	if stage.actNum == 2
-		SetMusicTrack("CyberCity.ogg", 0, 0xE9CC)
+		SetMusicTrack("GenocideDeathEgg.ogg", 0, 0xE9CC)
 		SpeedUpMusic = CCZSetup_Function101
 		SlowDownMusic = CCZSetup_Function102
 	else
-		SetMusicTrack("CyberCity.ogg", 0, 0xE9CC)
+		SetMusicTrack("GenocideDeathEgg.ogg", 0, 0xE9CC)
 	end if
 	if stage.player2Enabled == 1
 		object[1].xpos = object[0].xpos
