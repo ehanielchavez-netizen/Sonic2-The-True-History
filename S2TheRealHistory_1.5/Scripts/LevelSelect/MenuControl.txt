@@ -328,7 +328,7 @@ function MenuControl_Function1
 			PlayMusic(0)
 			break
 		case 38 // 0x26
-			SetMusicTrack("CyberCity.ogg", 0, 0x9B0AA)
+			SetMusicTrack("GenocideDeathEgg.ogg", 0, 0x9B0AA)
 			PlayMusic(0)
 			break
 		case 39 // 0x27
