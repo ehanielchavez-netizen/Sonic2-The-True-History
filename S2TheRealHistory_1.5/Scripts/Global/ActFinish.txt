@@ -371,12 +371,18 @@ event ObjectMain
 				case 20
 					stage.listPos = 21
 					break
-				case 21
-					// Mystic Cave Act2 (ultimo de RUINED) -> WARP POINT 2 -> FUTURE
-					saveRAM[2009] = 0
-					stage.activeList = REGULAR_STAGE
-					stage.listPos = 46
-					break
+					case 21
+						// Mystic Cave Act2 (ultimo de RUINED) -> WARP POINT 2 -> FUTURE (Casino Night)
+						saveRAM[2009] = 0
+						stage.activeList = REGULAR_STAGE
+						TRH_vidVideo = 2
+						TRH_vidTarget = 26
+						TRH_vidTotal = 160
+						TRH_vidFrame = 0
+						TRH_vidTimer = 0
+						TRH_vidSheet = 0
+						object.state = 20
+						break
 				case 22
 					stage.listPos = 23
 					break
@@ -415,15 +421,15 @@ event ObjectMain
 					stage.activeList = REGULAR_STAGE
 					stage.listPos = 22
 					break
-				case 30
-					// Final del FUTURE -> LAST BATTLE directo (sin Warp Point)
-					stage.activeList = REGULAR_STAGE
-					stage.listPos = 34
-					break
-				case 46
-					// Warp Point 2 (RUINED -> FUTURE) -> Casino Night Act1
-					stage.listPos = 26
-					break
+					case 30
+						// Genocide City Act1 -> Genocide City Act2
+						stage.activeList = REGULAR_STAGE
+						stage.listPos = 46
+						break
+					case 46
+						// Genocide City Act2 -> LAST BATTLE (Sky Chase)
+						stage.listPos = 34
+						break
 				case 34
 					stage.listPos = 31
 					break

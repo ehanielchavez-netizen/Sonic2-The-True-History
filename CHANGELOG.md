@@ -16,6 +16,7 @@ The project follows a simple release numbering scheme:
   - **Past → Ruined Present:** direct, no Warp Point.
   - **Warp Point 2:** end of Ruined Present (Mystic Cave Act 2) → Future.
   - **Future → Last Battle:** direct, no Warp Point.
+- **Genocide City Act 1 now leads into Act 2** before Last Battle; Act 2 is no longer skipped.
 - **Hidden Palace** is now triggered by collecting the **7th Chaos Emerald**. After leaving it, the player returns to the **next zone**, not the same zone.
 - Removed the old Hill Top → Hidden Palace route.
 

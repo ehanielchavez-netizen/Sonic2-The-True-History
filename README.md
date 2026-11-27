@@ -87,6 +87,7 @@ A few honest notes:
 - **Ocean Wind** uses its Enchanted Edition theme, and **Genocide City** uses the mod's **Death Egg remix**.
 - **Hidden Palace** is now the secret zone reached by collecting the **7th Chaos Emerald**; after it you return to the **next zone**, not the same one.
 - Restored the **Genocide City turrets** and the rest of the enemies in Act 1 and Act 2.
+- **Genocide City Act 1 now leads into Act 2** before Last Battle; the Act 2 stage is no longer skipped.
 - Kept the 1.0 fixes: real Genocide City layout, Act 1 layer crash fix, red springs, Act 2 goal post, Killerbug sprites, Warp Point 1 video, Hidden Palace, and clean Cyber City music.
 - Base `Data/Game/GameConfig.bin` and `Scripts/LevelSelect/MenuControl.txt` remain untouched.
 

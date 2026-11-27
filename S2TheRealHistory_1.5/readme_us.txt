@@ -102,6 +102,7 @@ ROUTE AND TRANSITIONS (1.5)
 - Future -> Last Battle: direct, no Warp Point.
 - Ocean Wind uses its Enchanted Edition theme.
 - Genocide City uses the mod's Death Egg remix.
+- Genocide City Act1 -> Act2 -> Last Battle (Act2 is included).
 - Hidden Palace: reached by collecting the 7th Chaos Emerald.
   After Hidden Palace you return to the NEXT ZONE, not the same one.
 

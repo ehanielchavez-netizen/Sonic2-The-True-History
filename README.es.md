@@ -88,6 +88,7 @@ Notas importantes y honestas:
 - **Ocean Wind** usa su tema de Enchanted Edition y **Genocide City** usa el **Death Egg remix** del mod.
 - **Hidden Palace** ahora es la zona secreta que se activa al conseguir la **7.ª Esmeralda**; al salir vuelves a la **zona siguiente**, no a la misma.
 - Restauradas las **torretas de Genocide City** y el resto de enemigos en los actos 1 y 2.
+- **Genocide City Acto 1 ahora lleva al Acto 2** antes de Last Battle; el Acto 2 ya no se salta.
 - Se mantienen los arreglos de la 1.0: layout real de Genocide City, arreglo de capas del Acto 1, resortes rojos, poste de meta del Acto 2, sprites de Killerbug, video del Warp Point 1, Hidden Palace y música limpia de Cyber City.
 - Los archivos base `Data/Game/GameConfig.bin` y `Scripts/LevelSelect/MenuControl.txt` siguen intactos.
 
