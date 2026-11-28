@@ -395,7 +395,9 @@ event ObjectStartup
 					SlowDownMusic = SLZSetup_Function94
 					break
 				default
-					SetMusicTrack("OceanWind.ogg", 0, 0x254AE)
+					// TRH 2.0: Ocean Wind usa loop desde el inicio; el valor
+					// 0x254AE era el de Emerald Hill y podia dejar la pista muda.
+					SetMusicTrack("OceanWind.ogg", 0, 1)
 					// TRH 2.0: forzar la reproduccion del tema de Ocean Wind
 					// tras cargarlo; algunas partidas no arrancaban la pista.
 					PlayMusic(0)
