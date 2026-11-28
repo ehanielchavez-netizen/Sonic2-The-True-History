@@ -1,7 +1,7 @@
 SONIC 2: THE TRUE HISTORY
 Mod para Sonic 2 Absolute
 Autor: Hanichav02
-Version: 1.5
+Version: 2.0
 
 
 ============================================================
@@ -93,7 +93,7 @@ El mod esta pensado para funcionar como una capa encima del base.
 
 
 ============================================================
-RUTA Y TRANSICIONES (1.5)
+RUTA Y TRANSICIONES (2.0)
 ============================================================
 
 - Warp Point 1: final del Presente (Metropolis Acto 2) -> Pasado.
@@ -104,10 +104,22 @@ RUTA Y TRANSICIONES (1.5)
   Al salir vuelves a la SIGUIENTE ZONA, no a la misma.
 
 ============================================================
+NOVEDADES DE LA 2.0
+============================================================
+
+- Emerald Hill conserva sus enemigos en todos los actos, incluido el
+  epilogo y el regreso desde Hidden Palace.
+- El tema de Ocean Wind de Enchanted Edition se reconstruyo como un
+  OGG limpio y se fuerza su reproduccion al cargar la zona.
+- Genocide City mantiene las torretas restauradas y el remix de Death
+  Egg.
+
+============================================================
 PROBLEMAS CONOCIDOS
 ============================================================
 
-- Todos los enemigos de Genocide City, incluidas las torretas, estan presentes.
+- Las torretas de Genocide City estan restauradas, pero algunos objetos
+  importados pueden mostrar pequenos fallos visuales.
 - Blue Ocean no es un nivel nuevo: es Hydrocity renombrado.
 - Genocide City 2 no esta incluido.
 - No hay Olympus ni Madness Mountain jugables completos.
@@ -182,6 +194,6 @@ Gracias por jugar y por la paciencia durante el desarrollo.
 Este es mi primer mod y se fue armando poco a poco con pruebas,
 errores y correcciones.
 
-Version 1.5
+Version 2.0
 
 QUE LO DISFRUTES!

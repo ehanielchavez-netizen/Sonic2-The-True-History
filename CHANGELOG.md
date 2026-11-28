@@ -7,6 +7,19 @@ The project follows a simple release numbering scheme:
 
 ---
 
+## [2.0] — 2026-11-28
+
+### Fixes
+
+- **Emerald Hill enemies restored:** removed the scripts that despawned Coconuts, Masher, Buzzer, Bee and Snail in Emerald Hill and the epilogue. All acts now keep their enemies, including the return from Hidden Palace.
+- **Ocean Wind music fixed:** rebuilt `OceanWind.ogg` and `OceanWind_F.ogg` as clean OGG Vorbis files and forced playback when Ocean Wind loads.
+- Kept the 1.5 route, the Genocide City Act 2 transition, the restored turrets and the Death Egg remix.
+- Kept the 1.0 fixes: Genocide City layout, Act 1 layer crash fix, red springs, Act 2 goal post, Killerbug sprites and clean Cyber City music.
+- Renamed the mod title to **Sonic 2: The True History**; the version now appears separately as **2.0** in the mod metadata.
+- Base `Data/Game/GameConfig.bin` and `Scripts/LevelSelect/MenuControl.txt` remain untouched.
+
+---
+
 ## [1.5] — 2026-11-27
 
 ### Campaign and transitions

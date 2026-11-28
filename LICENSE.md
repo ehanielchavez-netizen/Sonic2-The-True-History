@@ -1,6 +1,6 @@
 # License and terms of use
 
-**Sonic 2: The True History** — version 1.5
+**Sonic 2: The True History** — version 2.0
 
 Copyright © 2026 **Hanichav02**. All original edits, scripts and integration work
 in this project are made by the author unless otherwise credited.
@@ -68,4 +68,4 @@ release is the version that applies to that release.
 
 ---
 
-Last updated: **2026-11-25** (version 1.5).
+Last updated: **2026-11-28** (version 2.0).

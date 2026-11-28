@@ -7,7 +7,7 @@
 
 Zonas descartadas. Eras reordenadas. Un viaje a través del tiempo.
 
-[**Descargar v1.5**](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest) · [Sitio web](https://ehanielchavez-netizen.github.io/Sonic2-The-True-History/es.html) · [English](README.md) · [Créditos](CREDITS.md)
+[**Descargar v2.0**](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest) · [Sitio web](https://ehanielchavez-netizen.github.io/Sonic2-The-True-History/es.html) · [English](README.md) · [Créditos](CREDITS.md)
 
 ![Sonic 2: The True History — Genocide City](docs/assets/genocide-city.png)
 
@@ -82,16 +82,13 @@ Notas importantes y honestas:
 
 ---
 
-## Novedades de la versión 1.5
+## Novedades de la versión 2.0
 
-- Corregida la ruta de la campaña: **Warp Point 1** cierra el Presente, **Pasado → Presente arruinado es directo**, **Warp Point 2** cierra el Presente arruinado y **Futuro → Última batalla es directo**.
-- **Ocean Wind** usa su tema de Enchanted Edition y **Genocide City** usa el **Death Egg remix** del mod.
-- **Hidden Palace** ahora es la zona secreta que se activa al conseguir la **7.ª Esmeralda**; al salir vuelves a la **zona siguiente**, no a la misma.
-- Restauradas las **torretas de Genocide City** y el resto de enemigos en los actos 1 y 2.
-- **Genocide City Acto 1 ahora lleva al Acto 2** antes de Last Battle; el Acto 2 ya no se salta.
-- Se mantienen los arreglos de la 1.0: layout real de Genocide City, arreglo de capas del Acto 1, resortes rojos, poste de meta del Acto 2, sprites de Killerbug, video del Warp Point 1, Hidden Palace y música limpia de Cyber City.
+- **Enemigos de Emerald Hill restaurados:** Coconuts, Masher, Buzzer, Bee y Snail permanecen activos en todos los actos, incluido el epílogo y el regreso desde Hidden Palace.
+- **Música de Ocean Wind corregida:** el tema de Enchanted Edition se reconstruyó como un OGG limpio y se fuerza su reproducción al cargar la zona.
+- Se mantienen la ruta de la 1.5, la transición al Acto 2 de Genocide City, las torretas restauradas y el remix de Death Egg.
+- Se mantienen los arreglos de la 1.0: layout real de Genocide City, arreglo de capas del Acto 1, resortes rojos, poste de meta del Acto 2, sprites de Killerbug y música limpia de Cyber City.
 - Los archivos base `Data/Game/GameConfig.bin` y `Scripts/LevelSelect/MenuControl.txt` siguen intactos.
-
 Consulta [CHANGELOG.md](CHANGELOG.md) para las notas técnicas completas.
 
 ---
@@ -106,9 +103,9 @@ Consulta [CHANGELOG.md](CHANGELOG.md) para las notas técnicas completas.
 
 ### Pasos
 
-1. Descarga el ZIP de la última versión **v1.5** desde la
+1. Descarga el ZIP de la última versión **v2.0** desde la
    [página de Releases](https://github.com/ehanielchavez-netizen/Sonic2-The-True-History/releases/latest).
-2. Extrae la carpeta **`S2TheRealHistory_1.5`** dentro de:
+2. Extrae la carpeta **`S2TheRealHistory_2.0`** dentro de:
 
    ```text
    Sonic2Absolute_1.1.1_EasySetup\Mods\
@@ -138,7 +135,7 @@ juego para configurar teclado y mando.
 
 - **Blue Ocean** es Hydrocity con otro nombre; no es un nivel nuevo.
 - **Genocide City 2** no está incluido.
-- **Los Star Posts de Genocide City están desactivados en la 1.5** por un bug de
+- **Los Star Posts de Genocide City están desactivados en la 2.0** por un bug de
   checkpoints. Los actos 1 y 2 siguen siendo jugables, y el Acto 2 tiene un poste
   de meta.
 - **El Acto 2 de Genocide City** usa el layout disponible en la fuente GCZ para
@@ -150,8 +147,8 @@ juego para configurar teclado y mando.
   sobrescribieron los archivos base.
 
 Más detalles en los readmes dentro del mod:
-[Inglés](S2TheRealHistory_1.5/readme_us.txt) ·
-[Español](S2TheRealHistory_1.5/readme_esp.txt).
+[Inglés](S2TheRealHistory_2.0/readme_us.txt) ·
+[Español](S2TheRealHistory_2.0/readme_esp.txt).
 
 ---
 

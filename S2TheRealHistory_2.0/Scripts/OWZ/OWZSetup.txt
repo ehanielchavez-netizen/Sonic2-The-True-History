@@ -396,6 +396,9 @@ event ObjectStartup
 					break
 				default
 					SetMusicTrack("OceanWind.ogg", 0, 0x254AE)
+					// TRH 2.0: forzar la reproduccion del tema de Ocean Wind
+					// tras cargarlo; algunas partidas no arrancaban la pista.
+					PlayMusic(0)
 					SpeedUpMusic = EHZSetup_Function97
 					SlowDownMusic = EHZSetup_Function98
 					break
